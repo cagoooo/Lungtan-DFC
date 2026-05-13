@@ -6,16 +6,23 @@
 <title>📺 監票畫面 — 龍潭國小 DFC 投票實況</title>
 <meta name="description" content="龍潭國小 第 123 屆 自治市小市長選舉 — DFC 行動方案即時監票畫面。本頁僅供觀看，無法進行投票操作。">
 
-<!-- Favicon -->
-<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.1.0">
-<link rel="apple-touch-icon" href="./favicon.svg?v=1.1.0">
+<!-- Favicon + PWA -->
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.2.0">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.2.0">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.2.0">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.2.0">
+<link rel="manifest" href="./manifest.json?v=1.2.0">
+<meta name="theme-color" content="#c0392b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DFC 監票">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://cagoooo.github.io/Lungtan-DFC/viewer.html">
 <meta property="og:title" content="即時監票 — 龍潭國小 第 123 屆 自治市小市長選舉">
 <meta property="og:description" content="DFC 行動方案即時監票畫面 — 全校教室即時連線監看。">
-<meta property="og:image" content="https://cagoooo.github.io/Lungtan-DFC/og-preview.png?v=1.1.0">
+<meta property="og:image" content="https://cagoooo.github.io/Lungtan-DFC/og-preview.png?v=1.2.0">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="zh_TW">
@@ -409,6 +416,220 @@
   body:fullscreen .watch-row,
   body:-webkit-full-screen .watch-row { padding: 18px 24px; }
 
+  /* ===== 儀式畫面（投票封存後的盛大開獎）===== */
+  .ceremony {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+  .ceremony-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(255,224,160,0.18), transparent 50%),
+      radial-gradient(circle at 80% 90%, rgba(255,100,100,0.25), transparent 50%),
+      linear-gradient(135deg, #4a0d0d 0%, #1a0508 60%, #000 100%);
+  }
+  .ceremony-overlay::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.5) 100%);
+  }
+  .ceremony-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1100px;
+    padding: 30px 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  .ceremony-title {
+    font-size: clamp(28px, 5vw, 56px);
+    font-weight: 900;
+    letter-spacing: 6px;
+    text-shadow: 0 0 30px rgba(255, 224, 160, 0.6), 0 4px 16px rgba(0,0,0,0.5);
+    animation: ceremony-title-pulse 3s ease-in-out infinite;
+    color: #ffe0a0;
+  }
+  @keyframes ceremony-title-pulse {
+    0%, 100% { transform: scale(1); text-shadow: 0 0 30px rgba(255, 224, 160, 0.6), 0 4px 16px rgba(0,0,0,0.5); }
+    50%      { transform: scale(1.05); text-shadow: 0 0 50px rgba(255, 224, 160, 0.9), 0 4px 16px rgba(0,0,0,0.5); }
+  }
+  .ceremony-meta {
+    font-size: clamp(13px, 1.5vw, 18px);
+    opacity: 0.85;
+    letter-spacing: 2px;
+  }
+  /* ===== 當選者卡片 ===== */
+  .ceremony-winner {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(255,224,160,0.15), rgba(212,160,23,0.1));
+    border: 2px solid rgba(255,224,160,0.4);
+    border-radius: 24px;
+    padding: 28px 32px;
+    box-shadow:
+      0 0 60px rgba(255, 224, 160, 0.3),
+      0 12px 48px rgba(0,0,0,0.5),
+      inset 0 0 60px rgba(255, 224, 160, 0.08);
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    animation: winner-glow 4s ease-in-out infinite;
+  }
+  @keyframes winner-glow {
+    0%, 100% { box-shadow: 0 0 60px rgba(255, 224, 160, 0.3), 0 12px 48px rgba(0,0,0,0.5), inset 0 0 60px rgba(255, 224, 160, 0.08); }
+    50%      { box-shadow: 0 0 100px rgba(255, 224, 160, 0.5), 0 12px 48px rgba(0,0,0,0.5), inset 0 0 60px rgba(255, 224, 160, 0.15); }
+  }
+  .ceremony-winner.is-tied {
+    background: linear-gradient(135deg, rgba(255,224,160,0.1), rgba(192,57,43,0.08));
+    flex-direction: column;
+    gap: 18px;
+  }
+  .ceremony-winner__photo {
+    width: 280px;
+    aspect-ratio: 16 / 9;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #faf3ea, #efe4d4);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .ceremony-winner__photo img {
+    max-width: 100%; max-height: 100%; object-fit: contain;
+  }
+  .ceremony-winner__info { text-align: left; flex: 1; min-width: 0; }
+  .ceremony-winner__crown {
+    font-size: clamp(40px, 4vw, 56px);
+    line-height: 1;
+    margin-bottom: 6px;
+    animation: crown-bob 2s ease-in-out infinite;
+  }
+  .ceremony-winner__class {
+    font-size: clamp(20px, 2.5vw, 28px);
+    color: #ffe0a0;
+    font-weight: 700;
+    margin-bottom: 4px;
+    letter-spacing: 2px;
+  }
+  .ceremony-winner__name {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 14px;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  .ceremony-winner__votes {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    background: rgba(255, 224, 160, 0.2);
+    padding: 8px 22px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 224, 160, 0.4);
+  }
+  .ceremony-winner__votes-num {
+    font-size: clamp(28px, 3.5vw, 44px);
+    font-weight: 900;
+    color: #ffe0a0;
+    font-variant-numeric: tabular-nums;
+  }
+  .ceremony-winner__votes-label {
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+  }
+  /* 並列當選 */
+  .ceremony-tied-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    width: 100%;
+  }
+  .ceremony-tied-card {
+    background: rgba(0,0,0,0.3);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .ceremony-tied-card img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #faf3ea, #efe4d4);
+  }
+  .ceremony-tied-card .cls { color: #ffe0a0; font-weight: 700; font-size: 16px; }
+  .ceremony-tied-card .nm  { color: #fff; font-weight: 800; font-size: 18px; margin: 4px 0; }
+  .ceremony-tied-card .votes { color: #ffe0a0; font-size: 22px; font-weight: 900; }
+
+  .ceremony-others {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    width: 100%;
+    max-width: 700px;
+  }
+  .ceremony-other {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-align: left;
+  }
+  .ceremony-other .rank { color: rgba(255,255,255,0.5); font-size: 11px; font-weight: 600; }
+  .ceremony-other .cls  { color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 600; }
+  .ceremony-other .nm   { color: #fff; font-size: 14px; font-weight: 700; margin: 2px 0; }
+  .ceremony-other .votes{ color: rgba(255,255,255,0.7); font-size: 12px; }
+
+  .ceremony-footer {
+    margin-top: 12px;
+    color: rgba(255,255,255,0.45);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  /* 儀式畫面內的持續彩帶 */
+  .confetti-ceremony {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .confetti-ceremony .confetti-piece {
+    position: absolute; top: -10%;
+    width: 12px; height: 18px;
+    opacity: 0.9;
+    animation: confetti-fall 6s linear infinite;
+  }
+
+  @media (max-width: 720px) {
+    .ceremony-winner {
+      flex-direction: column;
+      padding: 18px 20px;
+      gap: 16px;
+    }
+    .ceremony-winner__photo { width: 100%; max-width: 320px; }
+    .ceremony-winner__info { text-align: center; }
+    .ceremony-content { padding: 20px; gap: 18px; }
+  }
+
   /* ===== confetti ===== */
   .confetti {
     position: fixed; inset: 0;
@@ -477,6 +698,8 @@
       <div class="sub" id="subtitle">DFC 行動方案 · 投票實況</div>
     </div>
     <div class="header-actions">
+      <button class="icon-btn" id="sort-btn" title="切換排序（票數 / 編號）">🏆 依票數</button>
+      <button class="icon-btn" id="screenshot-btn" title="下載目前排行榜截圖">📷 截圖</button>
       <button class="icon-btn" id="sound-btn" title="切換音效">🔊 音效</button>
       <button class="icon-btn" id="fullscreen-btn" title="進入全螢幕（F 鍵）">⛶ 全螢幕</button>
       <a class="btn-home" href="index.html">🏠 首頁</a>
@@ -503,14 +726,29 @@
 <div class="leader-toast" id="leader-toast"></div>
 <div class="confetti" id="confetti"></div>
 
+<!-- 儀式畫面（meta.locked = true 時顯示） -->
+<div class="ceremony" id="ceremony" style="display:none;">
+  <div class="ceremony-overlay"></div>
+  <div class="ceremony-content">
+    <div class="ceremony-title">✨ 開票結果 ✨</div>
+    <div class="ceremony-meta" id="ceremony-meta"></div>
+    <div class="ceremony-winner" id="ceremony-winner"></div>
+    <div class="ceremony-others" id="ceremony-others"></div>
+    <div class="ceremony-footer">
+      <small>「封存」期間呈現。主持人到後台關閉「封存」即可回到一般監看畫面。</small>
+    </div>
+  </div>
+  <div class="confetti-ceremony" id="confetti-ceremony"></div>
+</div>
+
 <script type="module">
-import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.1.0';
+import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.2.0';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getDatabase, ref, onValue, set, push,
   onDisconnect, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-import { Sound } from './sound.js?v=1.1.0';
+import { Sound } from './sound.js?v=1.2.0';
 
 const root = document.getElementById('root');
 
@@ -532,6 +770,61 @@ document.getElementById('sound-btn').addEventListener('click', () => {
   Sound.unlock();
   refreshSoundBtn();
   if (!Sound.isMuted()) Sound.vote();
+});
+
+// ===== 排序模式 =====
+const SORT_KEY = 'dfc-sort-mode';
+let sortMode = localStorage.getItem(SORT_KEY) || 'votes'; // 'votes' | 'number'
+function refreshSortBtn() {
+  const btn = document.getElementById('sort-btn');
+  if (!btn) return;
+  btn.textContent = sortMode === 'votes' ? '🏆 依票數' : '🔢 依編號';
+}
+document.getElementById('sort-btn').addEventListener('click', () => {
+  sortMode = (sortMode === 'votes') ? 'number' : 'votes';
+  localStorage.setItem(SORT_KEY, sortMode);
+  refreshSortBtn();
+  if (window.__rerenderWatch) window.__rerenderWatch();
+});
+refreshSortBtn();
+
+// ===== 截圖功能（使用 html-to-image CDN，支援中文 web font）=====
+document.getElementById('screenshot-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('screenshot-btn');
+  const oldText = btn.textContent;
+  btn.textContent = '⏳ 準備中…';
+  btn.disabled = true;
+  try {
+    if (!window.htmlToImage) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.min.js';
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    const target = document.getElementById('root');
+    if (!target) throw new Error('找不到要截圖的內容');
+    const dataUrl = await window.htmlToImage.toPng(target, {
+      pixelRatio: 2,
+      backgroundColor: '#fff8f2',
+      cacheBust: true,
+    });
+    const a = document.createElement('a');
+    const ts = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+    a.download = `DFC監票截圖_${ts}.png`;
+    a.href = dataUrl;
+    a.click();
+    btn.textContent = '✓ 已下載';
+    setTimeout(() => { btn.textContent = oldText; btn.disabled = false; }, 2000);
+  } catch (err) {
+    console.error('截圖失敗', err);
+    btn.textContent = '❌ 截圖失敗';
+    alert('截圖失敗：' + err.message);
+    setTimeout(() => { btn.textContent = oldText; btn.disabled = false; }, 2000);
+  }
 });
 
 // ===== 全螢幕按鈕 =====
@@ -613,25 +906,44 @@ function initLiveViewer() {
   });
 
   // meta
+  let currentMeta = { ...DEFAULT_META };
   onValue(ref(db, 'dfc/meta'), (snap) => {
-    const meta = snap.val() || DEFAULT_META;
-    if (meta.title) document.getElementById('title').textContent = meta.title;
-    if (meta.subtitle) document.getElementById('subtitle').textContent = meta.subtitle;
-    if (meta.title) document.title = '📺 監票畫面 — ' + meta.title;
+    currentMeta = { ...DEFAULT_META, ...(snap.val() || {}) };
+    if (currentMeta.title) document.getElementById('title').textContent = currentMeta.title;
+    if (currentMeta.subtitle) document.getElementById('subtitle').textContent = currentMeta.subtitle;
+    if (currentMeta.title) document.title = '📺 監票畫面 — ' + currentMeta.title;
+    updateCeremony();
   });
 
   // actions 主聽
   let lastTotal = 0;
-  let lastLeaderKey = null;       // 上次的單一領先者 id（同票時為 null）
-  let lastTiedSet = null;         // 上次的並列領先者集合 string（用來偵測同票狀態變化）
+  let lastLeaderKey = null;
+  let lastTiedSet = null;
   let prevVotes = {};
+  let currentItems = [];
+
+  // 提供給排序切換按鈕用
+  window.__rerenderWatch = () => {
+    if (currentItems.length) renderActions(currentItems);
+  };
 
   onValue(ref(db, 'dfc/actions'), (snap) => {
     const data = snap.val();
     const items = data
       ? Object.values(data).filter(a => a && typeof a === 'object')
       : DEFAULT_ACTIONS.map(a => ({ ...a }));
-    items.sort((a, b) => (b.votes || 0) - (a.votes || 0) || (a.number || 0) - (b.number || 0));
+    currentItems = items;
+    renderActions(items);
+    updateCeremony(); // 票數更新後重算當選者
+  });
+
+  function renderActions(items) {
+    // 永遠先用「票數高低」算出名次（不受顯示排序影響）
+    const byVotes = [...items].sort((a, b) => (b.votes || 0) - (a.votes || 0) || (a.number || 0) - (b.number || 0));
+    // 顯示用順序：依編號 or 依票數
+    const displayItems = (sortMode === 'number')
+      ? [...items].sort((a, b) => (a.number || 0) - (b.number || 0))
+      : byVotes;
 
     const total = items.reduce((s, a) => s + (Number(a.votes) || 0), 0);
     const max = Math.max(1, ...items.map(a => Number(a.votes) || 0));
@@ -646,33 +958,41 @@ function initLiveViewer() {
       setTimeout(() => totalEl.classList.remove('bump'), 320);
     }
 
-    // ===== 計算並列名次 =====
-    // rankOf[index] = 該方案的「人類可讀名次」（同票一樣）
-    const rankOf = new Array(items.length).fill(1);
-    for (let i = 1; i < items.length; i++) {
-      rankOf[i] = items[i].votes === items[i - 1].votes ? rankOf[i - 1] : i + 1;
+    // ===== 計算並列名次（基於 byVotes）=====
+    const rankByIdx = new Array(byVotes.length).fill(1);
+    for (let i = 1; i < byVotes.length; i++) {
+      rankByIdx[i] = byVotes[i].votes === byVotes[i - 1].votes ? rankByIdx[i - 1] : i + 1;
     }
-    // 並列領先（rank 1 且票數 > 0）的 id 集合
-    const tiedLeaders = items.filter((p, i) => rankOf[i] === 1 && p.votes > 0);
+    // 建 id -> rank 映射
+    const rankOfId = {};
+    byVotes.forEach((p, i) => { rankOfId[p.id || p.number] = rankByIdx[i]; });
+    // 同票方案 id 集合（用來標 "tied" class）
+    const tiedIds = new Set();
+    const votesCount = {};
+    byVotes.forEach(p => { votesCount[p.votes] = (votesCount[p.votes] || 0) + 1; });
+    byVotes.forEach(p => { if (votesCount[p.votes] > 1 && p.votes > 0) tiedIds.add(p.id || p.number); });
+
+    // 並列領先（rank 1 且票數 > 0）
+    const tiedLeaders = byVotes.filter(p => rankOfId[p.id || p.number] === 1 && p.votes > 0);
     const isTieAtTop = tiedLeaders.length >= 2;
 
     // ===== 渲染列表 =====
     const list = document.getElementById('watch-list');
-    if (items.length === 0) {
+    if (displayItems.length === 0) {
       list.innerHTML = `<div class="watch-empty"><div class="icon">📭</div>目前沒有任何方案。<div class="hint">請主持人到後台「設定」新增方案。</div></div>`;
       return;
     }
 
     list.innerHTML = '';
-    items.forEach((p, idx) => {
+    displayItems.forEach((p) => {
+      const key = p.id || p.number;
       const votes = Number(p.votes) || 0;
       const pct = total > 0 ? (votes / total * 100) : 0;
       const barPct = (votes / max) * 100;
-      const rank = rankOf[idx];
+      const rank = rankOfId[key];
       const isLeader = rank === 1 && votes > 0 && !isTieAtTop;
       const isTiedLeader = rank === 1 && votes > 0 && isTieAtTop;
-      const tiedHere = idx > 0 && items[idx - 1].votes === votes
-                    || idx < items.length - 1 && items[idx + 1].votes === votes;
+      const tiedHere = tiedIds.has(key);
 
       const row = document.createElement('div');
       row.className = 'watch-row'
@@ -680,7 +1000,7 @@ function initLiveViewer() {
         + (isTiedLeader ? ' watch-row--tied-leader' : '')
         + (tiedHere ? ' tied' : '');
       row.dataset.rank = rank;
-      row.dataset.id = p.id || p.number;
+      row.dataset.id = key;
 
       const rankSub = tiedHere ? '<span class="watch-rank-sub">並列</span>' : '';
 
@@ -701,14 +1021,13 @@ function initLiveViewer() {
           <div class="watch-bar"><div class="watch-bar-fill" style="width:${barPct}%"></div></div>
         </div>
         <div class="watch-count">
-          <span class="watch-count-num" data-id="${p.id || p.number}">${votes}</span>
+          <span class="watch-count-num" data-id="${key}">${votes}</span>
           <span class="watch-count-pct">${pct.toFixed(1)}%</span>
         </div>
       `;
       list.appendChild(row);
 
       // 票數增加 → bump + 整列光暈 + 粒子 + 音效
-      const key = p.id || p.number;
       const prev = prevVotes[key] || 0;
       if (votes > prev) {
         const numEl = row.querySelector('.watch-count-num');
@@ -724,7 +1043,8 @@ function initLiveViewer() {
 
     // ===== 同票警示橫幅 =====
     const tieHost = document.getElementById('tie-alert-host');
-    const currentTiedKey = isTieAtTop ? tiedLeaders.map(p => p.id || p.number).sort().join(',') + ':' + items[0].votes : '';
+    const topVotes = byVotes[0]?.votes || 0;
+    const currentTiedKey = isTieAtTop ? tiedLeaders.map(p => p.id || p.number).sort().join(',') + ':' + topVotes : '';
     if (isTieAtTop) {
       const names = tiedLeaders.map(p => `<strong>${escapeHtml(p.className || '')} ${escapeHtml(p.name || '')}</strong>`).join('、');
       tieHost.innerHTML = `
@@ -732,34 +1052,151 @@ function initLiveViewer() {
           <span class="icon">🤝</span>
           <div class="text">
             <strong>同票狀態</strong>
-            目前 ${names} 同為最高票（各 ${items[0].votes} 票），尚無單一領先者。
+            目前 ${names} 同為最高票（各 ${topVotes} 票），尚無單一領先者。
           </div>
         </div>
       `;
-      // 第一次進入同票狀態 → 音效
       if (currentTiedKey !== lastTiedSet) Sound.tie();
     } else {
       tieHost.innerHTML = '';
     }
     lastTiedSet = currentTiedKey;
 
-    // ===== 領先者變動偵測 =====
-    const currentLeaderKey = (!isTieAtTop && items[0]?.votes > 0)
-      ? (items[0].id || items[0].number)
+    // ===== 領先者變動偵測（基於 byVotes，不受顯示排序影響）=====
+    const currentLeaderKey = (!isTieAtTop && byVotes[0]?.votes > 0)
+      ? (byVotes[0].id || byVotes[0].number)
       : null;
     if (currentLeaderKey
         && currentLeaderKey !== lastLeaderKey
         && lastLeaderKey !== null
         && total > 0) {
-      // 真正的領先者「變動」（非首次出現）
-      const leader = items[0];
+      const leader = byVotes[0];
       showLeaderToast(`👑 ${leader.className || ''} 領先！`);
       celebrate();
       Sound.leaderChange();
     }
     lastLeaderKey = currentLeaderKey;
     lastTotal = total;
-  });
+  }
+
+  // ===== 儀式畫面渲染（meta.locked = true 時） =====
+  let ceremonyConfettiTimer = null;
+  function updateCeremony() {
+    const cer = document.getElementById('ceremony');
+    if (!cer) return;
+    if (!currentMeta.locked) {
+      // 退出儀式
+      cer.style.display = 'none';
+      document.body.style.overflow = '';
+      if (ceremonyConfettiTimer) {
+        clearInterval(ceremonyConfettiTimer);
+        ceremonyConfettiTimer = null;
+        document.getElementById('confetti-ceremony').innerHTML = '';
+      }
+      return;
+    }
+    // 啟動儀式
+    if (currentItems.length === 0) return;
+    const byVotes = [...currentItems].sort((a, b) =>
+      (b.votes || 0) - (a.votes || 0) || (a.number || 0) - (b.number || 0));
+    const top = byVotes[0]?.votes || 0;
+    const winners = byVotes.filter(p => (p.votes || 0) === top && top > 0);
+    const isTied = winners.length >= 2;
+    const totalVotes = currentItems.reduce((s, a) => s + (Number(a.votes) || 0), 0);
+
+    // 顯示
+    cer.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // meta 子標
+    const metaEl = document.getElementById('ceremony-meta');
+    metaEl.innerHTML = `${escapeHtml(currentMeta.title || '')} · 總票數 <strong>${totalVotes}</strong> 票 · 共 ${currentItems.length} 個方案`;
+
+    // 當選者區
+    const winnerHost = document.getElementById('ceremony-winner');
+    if (top === 0) {
+      winnerHost.classList.remove('is-tied');
+      winnerHost.innerHTML = `<div style="padding:30px;color:rgba(255,255,255,0.6);">尚無任何得票，等待開票中…</div>`;
+    } else if (isTied) {
+      winnerHost.classList.add('is-tied');
+      winnerHost.innerHTML = `
+        <div style="font-size:clamp(20px,2vw,28px);color:#ffe0a0;letter-spacing:2px;">🤝 並列當選</div>
+        <div class="ceremony-tied-list">
+          ${winners.map(w => `
+            <div class="ceremony-tied-card">
+              ${w.photo ? `<img src="${escapeAttr(w.photo)}" alt="" onerror="this.style.display='none'">` : ''}
+              <div class="cls">${escapeHtml(w.className || '')}</div>
+              <div class="nm">${escapeHtml(w.name || '')}</div>
+              <div class="votes">${w.votes} 票</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } else {
+      const w = winners[0];
+      winnerHost.classList.remove('is-tied');
+      winnerHost.innerHTML = `
+        <div class="ceremony-winner__photo">
+          ${w.photo ? `<img src="${escapeAttr(w.photo)}" alt="" onerror="this.style.display='none'">` : ''}
+        </div>
+        <div class="ceremony-winner__info">
+          <div class="ceremony-winner__crown">👑</div>
+          <div class="ceremony-winner__class">${escapeHtml(w.className || '')}</div>
+          <div class="ceremony-winner__name">${escapeHtml(w.name || '')}</div>
+          <div class="ceremony-winner__votes">
+            <span class="ceremony-winner__votes-num">${w.votes}</span>
+            <span class="ceremony-winner__votes-label">票 · ${totalVotes > 0 ? ((w.votes / totalVotes) * 100).toFixed(1) : '0.0'}%</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // 其他方案（第 2 名以後）
+    const others = byVotes.filter(p => !winners.includes(p));
+    const othersHost = document.getElementById('ceremony-others');
+    if (others.length > 0) {
+      // 算名次
+      const rankMap = {};
+      let curRank = winners.length + 1;
+      for (let i = 0; i < others.length; i++) {
+        if (i > 0 && others[i].votes !== others[i - 1].votes) curRank = winners.length + i + 1;
+        rankMap[others[i].id || others[i].number] = curRank;
+      }
+      othersHost.innerHTML = others.map(p => `
+        <div class="ceremony-other">
+          <div class="rank">第 ${rankMap[p.id || p.number]} 名</div>
+          <div class="cls">${escapeHtml(p.className || '')}</div>
+          <div class="nm">${escapeHtml(p.name || '')}</div>
+          <div class="votes">${p.votes || 0} 票</div>
+        </div>
+      `).join('');
+    } else {
+      othersHost.innerHTML = '';
+    }
+
+    // 持續撒彩帶
+    if (!ceremonyConfettiTimer && top > 0) {
+      const colors = ['#e74c3c', '#f1c40f', '#3498db', '#2ecc71', '#9b59b6', '#e67e22', '#ffe0a0', '#fff'];
+      const layer = document.getElementById('confetti-ceremony');
+      const sprinkle = () => {
+        for (let i = 0; i < 6; i++) {
+          const piece = document.createElement('div');
+          piece.className = 'confetti-piece';
+          piece.style.left = (Math.random() * 100) + 'vw';
+          piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+          piece.style.animationDuration = (4 + Math.random() * 3) + 's';
+          piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+          layer.appendChild(piece);
+          // 落地後移除避免 DOM 爆炸
+          setTimeout(() => piece.remove(), 8000);
+        }
+      };
+      sprinkle();
+      ceremonyConfettiTimer = setInterval(sprinkle, 600);
+    }
+  }
+  // 把 updateCeremony 暴露成 inner closure access
+  window.__updateCeremony = updateCeremony;
 
   onValue(ref(db, 'dfc/presence'), (snap) => {
     const data = snap.val() || {};
@@ -840,6 +1277,6 @@ function burstParticles(hostEl, isGold) {
 }
 </script>
 
-<script defer src="./version-check.js?v=1.1.0"></script>
+<script defer src="./version-check.js?v=1.2.0"></script>
 </body>
 </html>

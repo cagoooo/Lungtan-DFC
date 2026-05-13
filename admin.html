@@ -5,9 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🔒 後台計票 — 龍潭國小 DFC 投票系統</title>
 
-<!-- Favicon -->
-<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.1.0">
-<link rel="apple-touch-icon" href="./favicon.svg?v=1.1.0">
+<!-- Favicon + PWA -->
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.2.0">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.2.0">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.2.0">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.2.0">
+<link rel="manifest" href="./manifest.json?v=1.2.0">
+<meta name="theme-color" content="#c0392b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DFC 後台">
 
 <!-- 後台不需 OG share，避免被搜尋引擎索引 -->
 <meta name="robots" content="noindex, nofollow">
@@ -404,6 +411,74 @@
     margin-bottom: 12px; font-size: 13px; font-weight: 600;
   }
 
+  /* log / 時間軸 */
+  .log-toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #fff; padding: 14px 18px;
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    margin-bottom: 12px; gap: 12px; flex-wrap: wrap;
+  }
+  .log-toolbar h3 { font-size: 16px; color: var(--primary-dark); }
+  .label-small { font-size: 12px; color: var(--muted); }
+  .log-list {
+    background: #fff; border-radius: var(--radius);
+    box-shadow: var(--shadow); max-height: 70vh; overflow-y: auto;
+  }
+  .log-empty {
+    padding: 50px 20px; text-align: center; color: var(--muted);
+    font-size: 14px;
+  }
+  .log-row {
+    display: grid;
+    grid-template-columns: 140px 60px 60px 1fr 80px;
+    gap: 12px; align-items: center;
+    padding: 10px 18px; border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    transition: background .2s;
+  }
+  .log-row:hover { background: #faf6f0; }
+  .log-row:last-child { border-bottom: 0; }
+  .log-row .ts {
+    color: var(--muted); font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  }
+  .log-row .delta {
+    text-align: center; font-weight: 800; font-size: 16px;
+    font-variant-numeric: tabular-nums;
+  }
+  .log-row.log-inc .delta { color: #2c8a3e; }
+  .log-row.log-dec .delta { color: var(--primary); }
+  .log-row .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--primary); color: #fff;
+    font-weight: 800; font-size: 13px;
+  }
+  .log-row .info { min-width: 0; }
+  .log-row .name {
+    font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .log-row .cls {
+    color: var(--accent); font-size: 12px; font-weight: 600;
+  }
+  .log-row .after {
+    text-align: right; font-weight: 700;
+    color: var(--text); font-variant-numeric: tabular-nums;
+  }
+  .log-row .after-label { font-size: 10px; color: var(--muted); font-weight: 400; }
+  /* 新進 log 高亮一下 */
+  @keyframes log-flash {
+    0%   { background: #fff3cd; }
+    100% { background: transparent; }
+  }
+  .log-row.new-row { animation: log-flash 2s ease-out; }
+
+  @media (max-width: 720px) {
+    .log-row { grid-template-columns: 100px 50px 1fr 60px; gap: 8px; padding: 8px 12px; font-size: 13px; }
+    .log-row .num { display: none; }
+  }
+
   /* settings */
   .settings-section {
     background: #fff; padding: 16px 20px;
@@ -557,6 +632,7 @@
     <div class="header-right">
       <nav class="tabs">
         <button class="tab-btn active" data-view="count">📊 計票</button>
+        <button class="tab-btn" data-view="log">📜 時間軸</button>
         <button class="tab-btn" data-view="settings">⚙️ 設定</button>
       </nav>
       <button class="icon-btn" id="sound-btn" title="切換音效">🔊 音效</button>
@@ -592,6 +668,21 @@
       </div>
     </div>
     <div class="cards" id="cards"></div>
+  </main>
+
+  <!-- 時間軸 -->
+  <main id="view-log" class="view">
+    <div class="log-toolbar">
+      <h3>📜 唱票時間軸（最近 100 筆）</h3>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="label-small" id="log-count">0 筆</span>
+        <button class="btn btn-ghost" id="log-export-csv-btn">📋 匯出 CSV</button>
+        <button class="btn btn-danger" id="log-clear-btn">🗑️ 清空時間軸</button>
+      </div>
+    </div>
+    <div class="log-list" id="log-list">
+      <div class="log-empty">尚無任何操作紀錄。<br><small>進「計票」加減票後會出現在這裡。</small></div>
+    </div>
   </main>
 
   <!-- 設定 -->
@@ -652,7 +743,7 @@
 <script type="module">
 import {
   firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META
-} from './firebase-config.js?v=1.1.0';
+} from './firebase-config.js?v=1.2.0';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getAuth, signInWithEmailAndPassword, signOut,
@@ -660,9 +751,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import {
   getDatabase, ref, onValue, set, update, push, remove,
-  runTransaction, onDisconnect, serverTimestamp
+  runTransaction, onDisconnect, serverTimestamp,
+  query, limitToLast, orderByChild
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-import { Sound } from './sound.js?v=1.1.0';
+import { Sound } from './sound.js?v=1.2.0';
 
 document.body.classList.remove('loading-app');
 
@@ -763,6 +855,7 @@ let currentActions = [];
 let currentMeta = { ...DEFAULT_META };
 let editingActions = null;
 let prevVotes = {};
+let currentLogItems = [];
 
 function initAdminApp(db, auth, user) {
   // presence
@@ -829,6 +922,63 @@ function initAdminApp(db, auth, user) {
     document.getElementById('watch-presence').textContent = viewers;
   });
 
+  // ===== log 時間軸（最近 100 筆，按 ts 排序）=====
+  const logQuery = query(ref(db, 'dfc/log'), orderByChild('ts'), limitToLast(100));
+  let lastLogKeys = new Set();
+  onValue(logQuery, (snap) => {
+    const items = [];
+    snap.forEach(child => { items.push({ key: child.key, ...child.val() }); });
+    items.sort((a, b) => (b.ts || 0) - (a.ts || 0)); // 最新在上
+    renderLog(items);
+    // 計算新加入的 key 做 highlight
+    const newKeys = new Set();
+    items.forEach(i => { if (!lastLogKeys.has(i.key)) newKeys.add(i.key); });
+    if (lastLogKeys.size > 0 && newKeys.size > 0) {
+      // 之後渲染後做 flash 動畫
+      newKeys.forEach(k => {
+        const el = document.querySelector(`.log-row[data-key="${k}"]`);
+        if (el) {
+          el.classList.add('new-row');
+          setTimeout(() => el.classList.remove('new-row'), 2000);
+        }
+      });
+    }
+    lastLogKeys = new Set(items.map(i => i.key));
+  });
+
+  // log 匯出 CSV
+  document.getElementById('log-export-csv-btn').addEventListener('click', () => {
+    const items = currentLogItems;
+    if (!items || items.length === 0) { toast('時間軸是空的'); return; }
+    const headers = ['時間', '選票編號', '班級', '方案名稱', '加減票', '寫入後票數'];
+    const rows = items.map(i => [
+      i.ts ? new Date(i.ts).toLocaleString('zh-TW', { hour12: false }) : '',
+      i.number || '',
+      i.className || '',
+      i.name || '',
+      i.delta > 0 ? '+' + i.delta : String(i.delta),
+      i.voteAfter || 0,
+    ]);
+    const csv = '﻿' + [headers, ...rows].map(r =>
+      r.map(cell => {
+        const s = String(cell);
+        return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      }).join(',')
+    ).join('\n');
+    const ts = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+    downloadFile(csv, `DFC唱票時間軸_${ts}.csv`, 'text/csv;charset=utf-8;');
+    toast('✓ 已下載時間軸 CSV');
+  });
+
+  // log 清空
+  document.getElementById('log-clear-btn').addEventListener('click', async () => {
+    if (!confirm('確定要清空所有唱票時間軸紀錄嗎？\n\n⚠️ 票數不會被影響，但所有歷史操作紀錄會永久刪除，無法復原。')) return;
+    try {
+      await remove(ref(db, 'dfc/log'));
+      toast('時間軸已清空');
+    } catch (e) { toast('清空失敗：' + e.message); }
+  });
+
   // 加/減票
   document.getElementById('cards').addEventListener('click', async (e) => {
     const btn = e.target.closest('button[data-action]');
@@ -853,10 +1003,23 @@ function initAdminApp(db, auth, user) {
     }
 
     try {
-      await runTransaction(ref(db, `dfc/actions/${id}/votes`), (cur) => {
+      const res = await runTransaction(ref(db, `dfc/actions/${id}/votes`), (cur) => {
         const n = (Number(cur) || 0) + delta;
         return n < 0 ? 0 : n;
       });
+      // 寫成功 → 補一筆 log（不擋 UI，失敗也不影響票數）
+      if (res.committed) {
+        const action = currentActions.find(a => a.id === id);
+        push(ref(db, 'dfc/log'), {
+          ts: serverTimestamp(),
+          actionId: id,
+          number: action?.number || id,
+          className: action?.className || '',
+          name: action?.name || '',
+          delta: delta,
+          voteAfter: Number(res.snapshot?.val()) || 0,
+        }).catch(err => console.warn('[log] write failed', err));
+      }
     } catch (e) { toast('寫入失敗：' + e.message); }
   });
 
@@ -1052,6 +1215,19 @@ function initAdminApp(db, auth, user) {
           burstParticles(btn);
         }
         runTransaction(ref(db, `dfc/actions/${action.id}/votes`), (cur) => (Number(cur) || 0) + 1)
+          .then(res => {
+            if (res.committed) {
+              push(ref(db, 'dfc/log'), {
+                ts: serverTimestamp(),
+                actionId: action.id,
+                number: action.number,
+                className: action.className || '',
+                name: action.name || '',
+                delta: 1,
+                voteAfter: Number(res.snapshot?.val()) || 0,
+              }).catch(() => {});
+            }
+          })
           .catch(err => toast('加票失敗：' + err.message));
         e.preventDefault();
       }
@@ -1141,6 +1317,50 @@ function renderCards() {
   });
   const total = currentActions.reduce((s, p) => s + (Number(p.votes) || 0), 0);
   document.getElementById('total-votes').textContent = total;
+}
+
+function renderLog(items) {
+  currentLogItems = items;
+  const container = document.getElementById('log-list');
+  if (!container) return;
+  document.getElementById('log-count').textContent = items.length + ' 筆';
+  if (items.length === 0) {
+    container.innerHTML = `<div class="log-empty">尚無任何操作紀錄。<br><small>進「計票」加減票後會出現在這裡。</small></div>`;
+    return;
+  }
+  container.innerHTML = items.map(i => {
+    const ts = i.ts ? new Date(i.ts) : null;
+    const tsStr = ts ? `${String(ts.getMonth()+1).padStart(2,'0')}/${String(ts.getDate()).padStart(2,'0')} ${String(ts.getHours()).padStart(2,'0')}:${String(ts.getMinutes()).padStart(2,'0')}:${String(ts.getSeconds()).padStart(2,'0')}` : '—';
+    const deltaCls = (i.delta || 0) >= 0 ? 'log-inc' : 'log-dec';
+    const deltaStr = (i.delta || 0) > 0 ? '+' + i.delta : String(i.delta || 0);
+    return `
+      <div class="log-row ${deltaCls}" data-key="${escapeAttr(i.key)}">
+        <span class="ts">${escapeHtml(tsStr)}</span>
+        <span class="num">${i.number || '?'}</span>
+        <span class="delta">${deltaStr}</span>
+        <div class="info">
+          <div class="cls">${escapeHtml(i.className || '')}</div>
+          <div class="name">${escapeHtml(i.name || '')}</div>
+        </div>
+        <div class="after">
+          <span class="after-label">寫入後</span><br>
+          ${i.voteAfter || 0} 票
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function downloadFile(content, filename, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 function renderSettings() {
@@ -1272,6 +1492,6 @@ printStyle.textContent = `
 document.head.appendChild(printStyle);
 </script>
 
-<script defer src="./version-check.js?v=1.1.0"></script>
+<script defer src="./version-check.js?v=1.2.0"></script>
 </body>
 </html>

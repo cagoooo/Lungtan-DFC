@@ -1,0 +1,50 @@
+{
+  "name": "龍潭國小 DFC 投票系統",
+  "short_name": "DFC 投票",
+  "description": "龍潭國小 第 123 屆 自治市小市長選舉 — DFC 行動方案即時投票與監票系統。",
+  "lang": "zh-Hant",
+  "dir": "ltr",
+  "start_url": "./viewer.html?utm_source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#c0392b",
+  "background_color": "#fff8f2",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "進入監票畫面",
+      "short_name": "監票",
+      "description": "公開即時監看開票結果",
+      "url": "./viewer.html?utm_source=pwa-shortcut",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "後台計票登入",
+      "short_name": "後台",
+      "description": "管理員登入後台加減票",
+      "url": "./admin.html?utm_source=pwa-shortcut",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["education", "utilities"]
+}
