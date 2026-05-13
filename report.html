@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>開票結果報告 — 龍潭國小 DFC 投票系統</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.6.0">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png?v=1.6.0">
+<meta name="theme-color" content="#c0392b">
+<meta name="robots" content="noindex, nofollow">
+
+<style>
+  /* ===== A4 列印設定 ===== */
+  @page {
+    size: A4 portrait;
+    margin: 18mm 16mm 18mm 16mm;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: #2b2b2b;
+    background: #ece4d7;
+  }
+
+  /* ===== toolbar（螢幕顯示，列印隱藏）===== */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(135deg, #c0392b, #962d22);
+    color: #fff;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .toolbar h1 {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .toolbar .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .toolbar .btn {
+    border: 0;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .toolbar .btn-primary {
+    background: #ffe0a0;
+    color: #6e1f17;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .toolbar .btn-primary:hover { background: #fff; transform: translateY(-1px); }
+  .toolbar .btn-ghost {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    backdrop-filter: blur(6px);
+  }
+  .toolbar .btn-ghost:hover { background: rgba(255,255,255,0.25); }
+  .toolbar-hint {
+    font-size: 12px;
+    color: rgba(255,255,255,0.85);
+    margin-left: 6px;
+  }
+
+  /* ===== A4 報告主體 ===== */
+  .report {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 24px auto;
+    padding: 22mm 18mm;
+    background: #fff;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    color: #000;
+  }
+
+  /* 載入狀態 */
+  .loading {
+    text-align: center;
+    padding: 80px 20px;
+    color: #999;
+    font-size: 14px;
+  }
+
+  /* ===== 報告 header ===== */
+  .r-school {
+    text-align: center;
+    font-size: 14px;
+    color: #777;
+    letter-spacing: 4px;
+    margin-bottom: 4px;
+  }
+  .r-school::before, .r-school::after {
+    content: "──";
+    color: #c0392b;
+    margin: 0 10px;
+    opacity: 0.5;
+  }
+  .r-title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: 900;
+    color: #962d22;
+    letter-spacing: 3px;
+    line-height: 1.3;
+    margin: 8px 0 6px;
+  }
+  .r-subtitle {
+    text-align: center;
+    font-size: 15px;
+    color: #555;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+  }
+  .r-rule {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #c0392b 20%, #c0392b 80%, transparent);
+    margin: 14px 0 20px;
+  }
+
+  /* ===== 報告 meta ===== */
+  .r-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 24px;
+    margin-bottom: 22px;
+    font-size: 13.5px;
+  }
+  .r-meta-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .r-meta-label {
+    color: #777;
+    font-weight: 600;
+    min-width: 70px;
+  }
+  .r-meta-value {
+    color: #000;
+    font-weight: 700;
+  }
+  .r-meta-total {
+    color: #c0392b;
+    font-size: 18px;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ===== 區塊標題 ===== */
+  .r-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #962d22;
+    margin: 20px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #c0392b;
+    letter-spacing: 2px;
+  }
+  .r-section-title::before { content: "▎"; color: #c0392b; }
+
+  /* ===== 開票結果表格 ===== */
+  .r-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+  .r-table thead th {
+    background: #f5ebe0;
+    color: #6e1f17;
+    font-weight: 800;
+    padding: 9px 8px;
+    border-bottom: 2px solid #c0392b;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+  .r-table tbody td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #e6dccf;
+    vertical-align: middle;
+  }
+  .r-table tbody tr.r-winner td {
+    background: #fff8e5;
+  }
+  .r-table tbody tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .r-rank {
+    text-align: center;
+    font-weight: 800;
+    font-size: 14px;
+    width: 50px;
+  }
+  .r-rank-1 { color: #c89400; }
+  .r-rank-2 { color: #707070; }
+  .r-rank-3 { color: #a35a1e; }
+  .r-num {
+    text-align: center;
+    font-weight: 700;
+    width: 40px;
+    font-variant-numeric: tabular-nums;
+  }
+  .r-class { font-weight: 700; color: #2c5aa0; width: 80px; }
+  .r-name { font-weight: 600; }
+  .r-votes {
+    text-align: right;
+    font-weight: 800;
+    font-size: 14px;
+    color: #c0392b;
+    font-variant-numeric: tabular-nums;
+    width: 70px;
+  }
+  .r-pct {
+    text-align: right;
+    color: #777;
+    font-variant-numeric: tabular-nums;
+    width: 60px;
+  }
+  .r-winner-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #c89400;
+    color: #fff;
+    font-size: 11px;
+    border-radius: 4px;
+    font-weight: 700;
+    margin-left: 4px;
+    letter-spacing: 1px;
+  }
+
+  /* ===== 當選通告 ===== */
+  .r-winner-card {
+    margin: 18px 0;
+    padding: 16px 22px;
+    background: linear-gradient(135deg, #fff8e5, #fef3c7);
+    border: 2px solid #c89400;
+    border-radius: 8px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .r-winner-label {
+    font-size: 12px;
+    color: #6e1f17;
+    letter-spacing: 4px;
+    margin-bottom: 4px;
+    font-weight: 700;
+  }
+  .r-winner-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: #000;
+    letter-spacing: 1px;
+    line-height: 1.4;
+  }
+  .r-winner-title .crown { margin-right: 6px; }
+  .r-winner-votes {
+    font-size: 14px;
+    color: #555;
+    margin-top: 4px;
+  }
+  .r-winner-votes strong {
+    color: #c0392b;
+    font-size: 17px;
+    font-weight: 900;
+    margin: 0 3px;
+  }
+
+  /* ===== 簽核欄位 ===== */
+  .r-signatures {
+    margin-top: 28px;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .r-sign-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr;
+    gap: 14px;
+    align-items: end;
+    padding: 14px 0;
+    border-bottom: 1px solid #ccc;
+  }
+  .r-sign-label {
+    font-weight: 800;
+    color: #444;
+    letter-spacing: 2px;
+  }
+  .r-sign-line {
+    border-bottom: 1px solid #888;
+    height: 24px;
+    padding-bottom: 2px;
+    color: #aaa;
+    font-size: 11px;
+  }
+  .r-sign-line::before { content: "（簽章 / 蓋印）"; }
+  .r-sign-date::before { content: "日期："; color: #555; font-weight: 600; }
+  .r-sign-date {
+    border-bottom: 1px solid #888;
+    height: 24px;
+    padding-bottom: 2px;
+    font-size: 12px;
+    color: #aaa;
+  }
+
+  /* ===== 報告 footer ===== */
+  .r-footer {
+    margin-top: 24px;
+    padding-top: 12px;
+    border-top: 1px dashed #ccc;
+    text-align: center;
+    font-size: 11.5px;
+    color: #999;
+    letter-spacing: 3px;
+  }
+  .r-footer .stamp {
+    display: inline-block;
+    padding: 4px 18px;
+    border: 1px solid #c0392b;
+    color: #c0392b;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 4px;
+  }
+  .r-footer .url {
+    color: #aaa;
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 10px;
+    margin-top: 6px;
+  }
+
+  /* ===== 列印模式 ===== */
+  @media print {
+    html, body { background: #fff !important; }
+    .toolbar, .no-print { display: none !important; }
+    .report {
+      width: auto;
+      min-height: auto;
+      margin: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+    .r-section-title, .r-winner-card, .r-signatures {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .r-table thead { display: table-header-group; }
+    .r-table tr { page-break-inside: avoid; break-inside: avoid; }
+  }
+
+  /* setup warning */
+  .setup-warning {
+    background: #fff5d9; color: #6e4a00;
+    padding: 18px 22px; border-radius: 8px;
+    margin: 20px; font-size: 14px;
+    border-left: 4px solid #d4a017; line-height: 1.6;
+  }
+  .setup-warning code {
+    background: rgba(0,0,0,0.08); padding: 1px 6px; border-radius: 4px;
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <h1>📄 開票結果報告</h1>
+  <div class="actions">
+    <button class="btn btn-primary" id="print-btn">🖨️ 列印 / 存 PDF</button>
+    <button class="btn btn-ghost" id="refresh-btn">🔄 重抓資料</button>
+    <a class="btn btn-ghost" href="admin.html">← 回後台</a>
+    <a class="btn btn-ghost" href="viewer.html" target="_blank">📺 監票</a>
+  </div>
+  <div class="toolbar-hint">💡 列印對話框可選「另存為 PDF」存檔</div>
+</div>
+
+<div class="report" id="report">
+  <div class="loading">⏳ 正在從 Firebase 抓取最新資料…</div>
+</div>
+
+<script type="module">
+import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.6.0';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const reportEl = document.getElementById('report');
+let db = null;
+
+async function loadAndRender() {
+  if (isPlaceholderConfig()) {
+    reportEl.innerHTML = `
+      <div class="setup-warning">
+        ⚠️ <strong>Firebase 尚未設定。</strong><br>
+        請打開 <code>firebase-config.js</code>，把佔位字串換成你的 Firebase 專案設定。
+      </div>
+    `;
+    return;
+  }
+  try {
+    if (!db) {
+      const app = initializeApp(firebaseConfig);
+      db = getDatabase(app);
+    }
+    reportEl.innerHTML = '<div class="loading">⏳ 正在從 Firebase 抓取最新資料…</div>';
+    const snap = await get(ref(db, 'dfc'));
+    const data = snap.val() || {};
+    renderReport(data);
+  } catch (err) {
+    reportEl.innerHTML = `
+      <div class="setup-warning">
+        ❌ 載入失敗：${escapeHtml(err.message || String(err))}
+      </div>
+    `;
+    console.error('load failed:', err);
+  }
+}
+
+function renderReport(data) {
+  const meta = { ...DEFAULT_META, ...(data.meta || {}) };
+  const rawActions = data.actions
+    ? Object.values(data.actions).filter(a => a && typeof a === 'object')
+    : DEFAULT_ACTIONS.map(a => ({ ...a }));
+  // 依票數排序
+  const items = [...rawActions].sort((a, b) =>
+    (b.votes || 0) - (a.votes || 0) || (a.number || 0) - (b.number || 0));
+
+  // 計算並列名次
+  const rankByIdx = new Array(items.length).fill(1);
+  for (let i = 1; i < items.length; i++) {
+    rankByIdx[i] = items[i].votes === items[i - 1].votes ? rankByIdx[i - 1] : i + 1;
+  }
+  const total = items.reduce((s, a) => s + (Number(a.votes) || 0), 0);
+  // 當選者：第 1 名（含並列）且票數 > 0
+  const winners = items.filter((p, i) => rankByIdx[i] === 1 && (p.votes || 0) > 0);
+  const isTie = winners.length >= 2;
+  const hasAnyVote = total > 0;
+
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  const timeStr = `${now.getFullYear()} 年 ${pad(now.getMonth() + 1)} 月 ${pad(now.getDate())} 日　${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+  let winnerCardHtml = '';
+  if (hasAnyVote && winners.length > 0) {
+    if (isTie) {
+      const names = winners.map(w => `<strong>${escapeHtml(w.className || '')} ${escapeHtml(w.name || '')}</strong>`).join('、');
+      winnerCardHtml = `
+        <div class="r-winner-card">
+          <div class="r-winner-label">並列當選</div>
+          <div class="r-winner-title">🤝 ${names}</div>
+          <div class="r-winner-votes">各得 <strong>${winners[0].votes}</strong> 票，並列最高票，依本次選舉規則需進行後續處理。</div>
+        </div>
+      `;
+    } else {
+      const w = winners[0];
+      const pct = total > 0 ? ((w.votes / total) * 100).toFixed(1) : '0.0';
+      winnerCardHtml = `
+        <div class="r-winner-card">
+          <div class="r-winner-label">當選方案</div>
+          <div class="r-winner-title"><span class="crown">👑</span>${escapeHtml(w.className || '')}　${escapeHtml(w.name || '')}</div>
+          <div class="r-winner-votes">得 <strong>${w.votes}</strong> 票（總票數 ${total} 票，得票率 <strong>${pct}%</strong>）</div>
+        </div>
+      `;
+    }
+  } else {
+    winnerCardHtml = `
+      <div class="r-winner-card" style="background:#f5ebe0; border-color:#aaa;">
+        <div class="r-winner-label">當選方案</div>
+        <div class="r-winner-title" style="color:#777;">⏳ 尚未開票或無得票紀錄</div>
+      </div>
+    `;
+  }
+
+  // 表格列
+  const rowsHtml = items.map((p, i) => {
+    const rank = rankByIdx[i];
+    const votes = Number(p.votes) || 0;
+    const pct = total > 0 ? ((votes / total) * 100).toFixed(1) : '0.0';
+    const isWinner = rank === 1 && votes > 0;
+    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+    const rankCls = rank === 1 ? 'r-rank-1' : rank === 2 ? 'r-rank-2' : rank === 3 ? 'r-rank-3' : '';
+    const winnerTag = isWinner ? `<span class="r-winner-tag">${isTie ? '並列當選' : '當選'}</span>` : '';
+    return `
+      <tr class="${isWinner ? 'r-winner' : ''}">
+        <td class="r-rank ${rankCls}">${medal} ${rank}</td>
+        <td class="r-num">${p.number || '-'}</td>
+        <td class="r-class">${escapeHtml(p.className || '')}</td>
+        <td class="r-name">${escapeHtml(p.name || '')}${winnerTag}</td>
+        <td class="r-votes">${votes}</td>
+        <td class="r-pct">${pct}%</td>
+      </tr>
+    `;
+  }).join('');
+
+  reportEl.innerHTML = `
+    <div class="r-school">${escapeHtml(meta.schoolName || '龍潭國小')}</div>
+    <h1 class="r-title">${escapeHtml(meta.title || '第 123 屆 自治市小市長選舉')}</h1>
+    <div class="r-subtitle">${escapeHtml(meta.subtitle || 'DFC 行動方案 開票結果報告')}</div>
+    <div class="r-rule"></div>
+
+    <div class="r-meta">
+      <div class="r-meta-item"><span class="r-meta-label">開票時間：</span><span class="r-meta-value">${escapeHtml(timeStr)}</span></div>
+      <div class="r-meta-item"><span class="r-meta-label">參選方案數：</span><span class="r-meta-value">${items.length} 個</span></div>
+      <div class="r-meta-item"><span class="r-meta-label">總投票數：</span><span class="r-meta-value r-meta-total">${total}</span><span style="color:#777;">票</span></div>
+      <div class="r-meta-item"><span class="r-meta-label">投票狀態：</span><span class="r-meta-value">${meta.locked ? '✓ 已封存' : (hasAnyVote ? '開票中' : '尚未開始')}</span></div>
+    </div>
+
+    <h2 class="r-section-title">開票結果</h2>
+    <table class="r-table">
+      <thead>
+        <tr>
+          <th class="r-rank">名次</th>
+          <th class="r-num">編號</th>
+          <th class="r-class">班級</th>
+          <th class="r-name">方案名稱</th>
+          <th class="r-votes">得票</th>
+          <th class="r-pct">得票率</th>
+        </tr>
+      </thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+
+    <h2 class="r-section-title">當選方案</h2>
+    ${winnerCardHtml}
+
+    <h2 class="r-section-title">簽核欄位</h2>
+    <div class="r-signatures">
+      <div class="r-sign-row">
+        <span class="r-sign-label">主持人</span>
+        <span class="r-sign-line"></span>
+        <span class="r-sign-date"></span>
+      </div>
+      <div class="r-sign-row">
+        <span class="r-sign-label">監察員</span>
+        <span class="r-sign-line"></span>
+        <span class="r-sign-date"></span>
+      </div>
+      <div class="r-sign-row">
+        <span class="r-sign-label">校&nbsp;&nbsp;&nbsp;&nbsp;長</span>
+        <span class="r-sign-line"></span>
+        <span class="r-sign-date"></span>
+      </div>
+    </div>
+
+    <div class="r-footer">
+      <div class="stamp">本次選舉結束</div>
+      <div>本報告由 龍潭國小 DFC 投票系統 自動產生　·　資料來源：Firebase Realtime Database 即時快照</div>
+      <div class="url">https://cagoooo.github.io/Lungtan-DFC/</div>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// 列印 / 重抓
+document.getElementById('print-btn').addEventListener('click', () => {
+  setTimeout(() => window.print(), 100);
+});
+document.getElementById('refresh-btn').addEventListener('click', () => {
+  loadAndRender();
+});
+
+// 載入
+loadAndRender();
+</script>
+
+<script defer src="./version-check.js?v=1.6.0"></script>
+</body>
+</html>
