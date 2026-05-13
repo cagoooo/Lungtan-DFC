@@ -6,11 +6,11 @@
 <title>🔒 後台計票 — 龍潭國小 DFC 投票系統</title>
 
 <!-- Favicon + PWA -->
-<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.3.0">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.3.0">
-<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.3.0">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.3.0">
-<link rel="manifest" href="./manifest.json?v=1.3.0">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.3.1">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.3.1">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.3.1">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.3.1">
+<link rel="manifest" href="./manifest.json?v=1.3.1">
 <meta name="theme-color" content="#c0392b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -43,9 +43,9 @@
   }
   body { min-height: 100vh; }
   .app {
-    max-width: 1600px;
+    max-width: 1800px;
     margin: 0 auto;
-    padding: 12px 16px 40px;
+    padding: 14px 24px 40px;
   }
 
   /* ===== login ===== */
@@ -102,29 +102,29 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     flex-wrap: wrap;
-    padding: 10px 0 12px;
+    padding: 12px 0 14px;
     border-bottom: 3px solid var(--primary);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
   .app-header h1 {
-    font-size: 20px; color: var(--primary-dark); letter-spacing: 1px;
+    font-size: 26px; color: var(--primary-dark); letter-spacing: 1px;
   }
   .app-header h1 small {
-    display: block; font-size: 12px; color: var(--muted);
-    font-weight: normal; margin-top: 2px; letter-spacing: 0;
+    display: block; font-size: 14px; color: var(--muted);
+    font-weight: normal; margin-top: 4px; letter-spacing: 0;
   }
   .header-right {
-    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
   }
   .tabs {
-    display: flex; gap: 6px; background: #fff; padding: 4px;
+    display: flex; gap: 6px; background: #fff; padding: 5px;
     border-radius: 999px; box-shadow: var(--shadow);
   }
   .tab-btn {
     border: 0; background: transparent; color: var(--muted);
-    font-size: 14px; font-weight: 600; padding: 6px 16px;
+    font-size: 15px; font-weight: 600; padding: 9px 22px;
     border-radius: 999px; cursor: pointer; font-family: inherit;
     transition: all .2s;
   }
@@ -134,22 +134,22 @@
   }
   .tab-btn:hover:not(.active) { background: #f0e6dc; color: var(--text); }
   .header-link, .icon-btn {
-    text-decoration: none; padding: 6px 12px; border-radius: 999px;
+    text-decoration: none; padding: 8px 16px; border-radius: 999px;
     background: #fff; color: var(--text);
-    font-weight: 600; font-size: 12px; box-shadow: var(--shadow);
+    font-weight: 600; font-size: 13px; box-shadow: var(--shadow);
     border: 0; cursor: pointer; font-family: inherit;
   }
   .header-link:hover, .icon-btn:hover { background: #f5ebe0; }
   .icon-btn.muted { background: #f5ebe0; color: var(--muted); text-decoration: line-through; }
   .header-info {
-    font-size: 12px; color: var(--muted);
+    font-size: 13px; color: var(--muted);
     display: flex; flex-direction: column; align-items: flex-end;
   }
-  .header-info .who { color: var(--text); font-weight: 600; }
+  .header-info .who { color: var(--text); font-weight: 600; font-size: 13px; }
   .logout-btn {
-    border: 0; padding: 5px 10px; border-radius: 999px;
+    border: 0; padding: 6px 12px; border-radius: 999px;
     background: #fff; color: var(--text); font-weight: 600; cursor: pointer;
-    font-family: inherit; box-shadow: var(--shadow); font-size: 11px;
+    font-family: inherit; box-shadow: var(--shadow); font-size: 12px;
   }
   .logout-btn:hover { background: #f5ebe0; }
 
@@ -160,21 +160,21 @@
   /* ===== summary ===== */
   .summary {
     display: flex; justify-content: space-between; align-items: center;
-    background: #fff; padding: 10px 18px;
+    background: #fff; padding: 14px 24px;
     border-radius: var(--radius); box-shadow: var(--shadow);
-    margin-bottom: 12px; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 16px; flex-wrap: wrap; gap: 14px;
   }
-  .summary-info { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-  .summary-info .label { color: var(--muted); font-size: 13px; }
+  .summary-info { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+  .summary-info .label { color: var(--muted); font-size: 15px; }
   .summary-info .total {
-    font-size: 26px; font-weight: 800; color: var(--primary);
+    font-size: 38px; font-weight: 900; color: var(--primary);
     font-variant-numeric: tabular-nums;
   }
-  .summary-info .total-suffix { font-size: 13px; color: var(--muted); }
+  .summary-info .total-suffix { font-size: 14px; color: var(--muted); }
   .live-pill {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 3px 10px; background: #e8f5ea; color: #2c8a3e;
-    border-radius: 999px; font-size: 11px; font-weight: 600;
+    padding: 4px 12px; background: #e8f5ea; color: #2c8a3e;
+    border-radius: 999px; font-size: 12px; font-weight: 600;
   }
   .live-pill.offline { background: #fde8e6; color: var(--primary-dark); }
   .live-pill .dot {
@@ -188,10 +188,10 @@
     100% { box-shadow: 0 0 0 0 rgba(44,138,62,0); }
   }
 
-  .summary-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .summary-actions { display: flex; gap: 8px; flex-wrap: wrap; }
   .btn {
-    border: 0; padding: 7px 14px; border-radius: 8px;
-    font-size: 13px; font-weight: 600; cursor: pointer;
+    border: 0; padding: 10px 18px; border-radius: 10px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
     transition: all 0.15s; font-family: inherit;
   }
   .btn-ghost { background: #f5ebe0; color: #6b4423; }
@@ -203,12 +203,13 @@
   .btn-primary { background: var(--primary); color: #fff; }
   .btn-primary:hover { background: var(--primary-dark); }
 
-  /* ===== cards 緊湊 grid（一螢幕看完 6 個） ===== */
+  /* ===== cards grid（一螢幕看完 6 個，大電腦下更氣派）===== */
   .cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    gap: 18px;
   }
+  @media (max-width: 1280px) { .cards { gap: 14px; } }
   @media (max-width: 1100px) { .cards { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 600px)  { .cards { grid-template-columns: 1fr; } }
 
@@ -218,37 +219,38 @@
     overflow: hidden;
     box-shadow: var(--shadow);
     display: grid;
-    grid-template-rows: 90px 1fr auto;
+    grid-template-rows: 160px 1fr auto;
     transition: all .25s cubic-bezier(.34,1.56,.64,1);
     position: relative;
   }
-  .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+  .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
   .card.card-leader {
     background: linear-gradient(135deg, #fff8e5 0%, #fff 60%);
-    border: 1.5px solid var(--gold);
-    box-shadow: 0 6px 20px rgba(212,160,23,0.2);
+    border: 2px solid var(--gold);
+    box-shadow: 0 8px 28px rgba(212,160,23,0.25);
   }
   .card.card-leader::before {
     content: "👑";
     position: absolute;
-    top: 6px; right: 8px;
-    font-size: 18px;
+    top: 8px; right: 12px;
+    font-size: 26px;
     z-index: 2;
     animation: crown-bob 2s ease-in-out infinite;
+    filter: drop-shadow(0 2px 4px rgba(212,160,23,.4));
   }
   @keyframes crown-bob {
     0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-3px); }
+    50%      { transform: translateY(-4px); }
   }
   .card.card-tied {
     background: linear-gradient(135deg, #fff5e0 0%, #fff 60%);
-    border: 1.5px solid var(--gold);
+    border: 2px solid var(--gold);
   }
   .card.card-tied::before {
     content: "🤝";
     position: absolute;
-    top: 6px; right: 8px;
-    font-size: 18px;
+    top: 8px; right: 12px;
+    font-size: 26px;
     z-index: 2;
   }
   /* 加票時整卡光暈 */
@@ -270,7 +272,7 @@
 
   .card-photo-frame {
     width: 100%;
-    height: 90px;
+    height: 160px;
     background: linear-gradient(135deg, #faf3ea, #efe4d4);
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
@@ -280,28 +282,30 @@
     object-fit: contain; display: block;
   }
   .card-photo-empty {
-    color: var(--muted); font-size: 11px; padding: 8px; text-align: center;
+    color: var(--muted); font-size: 13px; padding: 12px; text-align: center;
   }
   .card-body {
-    padding: 8px 12px 6px;
+    padding: 14px 18px 10px;
     display: flex; flex-direction: column;
-    gap: 4px; min-height: 0;
+    gap: 6px; min-height: 0;
   }
-  .card-header-row { display: flex; align-items: center; gap: 6px; }
+  .card-header-row { display: flex; align-items: center; gap: 10px; }
   .card-number {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 26px; height: 26px;
+    width: 36px; height: 36px;
     border-radius: 50%;
     background: var(--primary); color: #fff;
-    font-weight: 800; font-size: 14px;
+    font-weight: 800; font-size: 18px;
     flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(192,57,43,0.3);
   }
   .card-class {
-    color: var(--accent); font-size: 12px; font-weight: 600;
+    color: var(--accent); font-size: 15px; font-weight: 700;
+    letter-spacing: 0.5px;
   }
   .card-name {
-    font-size: 14px; font-weight: 700;
-    color: var(--text); line-height: 1.3;
+    font-size: 20px; font-weight: 800;
+    color: var(--text); line-height: 1.35;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -311,35 +315,35 @@
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: center;
-    padding: 8px 12px 10px;
+    padding: 12px 18px 16px;
     border-top: 1px dashed var(--border);
-    gap: 8px;
+    gap: 12px;
     position: relative;
   }
   .vote-count {
-    font-size: 34px; font-weight: 900;
+    font-size: 56px; font-weight: 900;
     color: var(--primary); font-variant-numeric: tabular-nums;
     line-height: 1;
     transition: transform .3s cubic-bezier(.34,1.56,.64,1);
   }
   .card-leader .vote-count, .card-tied .vote-count { color: var(--gold); }
   .vote-count.bump { transform: scale(1.4); }
-  .vote-count-label { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
-  .vote-buttons { display: flex; gap: 6px; align-items: center; }
+  .vote-count-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; letter-spacing: 1px; }
+  .vote-buttons { display: flex; gap: 10px; align-items: center; }
   .btn-plus {
-    width: 52px; height: 52px;
+    width: 76px; height: 76px;
     border-radius: 50%;
     border: 0;
     background: linear-gradient(135deg, #e74c3c, #c0392b);
-    color: #fff; font-size: 28px; font-weight: 300; cursor: pointer;
-    box-shadow: 0 4px 12px rgba(192,57,43,0.4);
+    color: #fff; font-size: 40px; font-weight: 300; cursor: pointer;
+    box-shadow: 0 6px 16px rgba(192,57,43,0.45);
     transition: all .15s;
     display: flex; align-items: center; justify-content: center;
     line-height: 1; position: relative; overflow: hidden;
   }
   .btn-plus:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(192,57,43,0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(192,57,43,0.6);
   }
   .btn-plus:active:not(:disabled) { transform: scale(0.92); }
   .btn-plus:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -356,11 +360,11 @@
     to { transform: scale(4); opacity: 0; }
   }
   .btn-minus {
-    width: 30px; height: 30px;
+    width: 42px; height: 42px;
     border-radius: 50%;
     border: 1.5px solid var(--border);
     background: #fff; color: var(--muted);
-    font-size: 18px; cursor: pointer;
+    font-size: 24px; cursor: pointer;
     transition: all .15s;
     display: flex; align-items: center; justify-content: center;
     line-height: 1;
@@ -579,18 +583,67 @@
     font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 13px;
   }
 
-  /* responsive */
-  @media (max-height: 800px) {
-    .card { grid-template-rows: 70px 1fr auto; }
-    .card-photo-frame { height: 70px; }
-    .vote-count { font-size: 28px; }
-    .btn-plus { width: 46px; height: 46px; font-size: 24px; }
-    .card-name { font-size: 13px; }
+  /* ===== RWD 斷點 ===== */
+  /* 1920+ 大電腦：用 .app max-width 1800px 自然撐開 */
+
+  /* 1400px 以下：筆電 / 中型螢幕，卡片內元素稍縮 */
+  @media (max-width: 1400px) {
+    .card { grid-template-rows: 140px 1fr auto; }
+    .card-photo-frame { height: 140px; }
+    .vote-count { font-size: 48px; }
+    .btn-plus { width: 68px; height: 68px; font-size: 36px; }
+    .btn-minus { width: 38px; height: 38px; font-size: 22px; }
+    .card-name { font-size: 18px; }
+    .app-header h1 { font-size: 23px; }
+    .summary-info .total { font-size: 32px; }
   }
+
+  /* 矮螢幕（13" 筆電 1366×768 或 1080p 開了工具列）— 一螢幕仍要看完 6 個 */
+  @media (max-height: 820px) {
+    .app { padding-top: 10px; padding-bottom: 30px; }
+    .app-header { padding: 8px 0 10px; margin-bottom: 10px; }
+    .summary { padding: 10px 18px; margin-bottom: 12px; }
+    .card { grid-template-rows: 100px 1fr auto; }
+    .card-photo-frame { height: 100px; }
+    .vote-count { font-size: 36px; }
+    .btn-plus { width: 56px; height: 56px; font-size: 30px; }
+    .btn-minus { width: 34px; height: 34px; font-size: 20px; }
+    .card-name { font-size: 15px; }
+    .card-body { padding: 10px 14px 6px; }
+    .card-votes { padding: 10px 14px 12px; }
+    .summary-info .total { font-size: 28px; }
+  }
+
+  /* 1100px 以下：2 欄 */
+  @media (max-width: 1100px) {
+    .app { padding: 12px 14px 30px; }
+    .card { grid-template-rows: 130px 1fr auto; }
+    .card-photo-frame { height: 130px; }
+    .vote-count { font-size: 42px; }
+    .btn-plus { width: 60px; height: 60px; font-size: 32px; }
+  }
+
+  /* 平板 720px 以下 */
   @media (max-width: 720px) {
-    .app-header h1 { font-size: 17px; }
-    .summary-info .total { font-size: 22px; }
-    .tab-btn { padding: 6px 12px; font-size: 13px; }
+    .app-header { gap: 8px; }
+    .app-header h1 { font-size: 18px; }
+    .app-header h1 small { font-size: 12px; }
+    .summary { padding: 10px 14px; }
+    .summary-info .total { font-size: 24px; }
+    .summary-info .label { font-size: 13px; }
+    .tab-btn { padding: 6px 14px; font-size: 13px; }
+    .header-link, .icon-btn { padding: 6px 12px; font-size: 12px; }
+  }
+
+  /* 手機 480px 以下：1 欄 + 按鈕仍易點 */
+  @media (max-width: 480px) {
+    .app { padding: 10px 12px 30px; }
+    .card { grid-template-rows: 120px 1fr auto; }
+    .card-photo-frame { height: 120px; }
+    .vote-count { font-size: 44px; }
+    .btn-plus { width: 64px; height: 64px; font-size: 32px; }
+    .btn-minus { width: 38px; height: 38px; font-size: 22px; }
+    .card-name { font-size: 17px; }
   }
 
   body.loading-app { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
@@ -743,7 +796,7 @@
 <script type="module">
 import {
   firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META
-} from './firebase-config.js?v=1.3.0';
+} from './firebase-config.js?v=1.3.1';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getAuth, signInWithEmailAndPassword, signOut,
@@ -754,7 +807,7 @@ import {
   runTransaction, onDisconnect, serverTimestamp,
   query, limitToLast, orderByChild
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-import { Sound } from './sound.js?v=1.3.0';
+import { Sound } from './sound.js?v=1.3.1';
 
 document.body.classList.remove('loading-app');
 
@@ -1492,6 +1545,6 @@ printStyle.textContent = `
 document.head.appendChild(printStyle);
 </script>
 
-<script defer src="./version-check.js?v=1.3.0"></script>
+<script defer src="./version-check.js?v=1.3.1"></script>
 </body>
 </html>
