@@ -1,5 +1,5 @@
 {
-  "version": "1.7.1",
-  "released": "2026-05-13T20:14:56+08:00",
-  "notes": "v1.7.1: admin timeline cumulative votes line chart (Chart.js)"
+  "version": "1.7.2",
+  "released": "2026-05-13T20:20:30+08:00",
+  "notes": "v1.7.2: lightbox shorter poster + scrollable content fits 100vh"
 }

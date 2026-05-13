@@ -7,11 +7,11 @@
 <meta name="description" content="龍潭國小 第 123 屆 自治市小市長選舉 — DFC 行動方案即時監票畫面。本頁僅供觀看，無法進行投票操作。">
 
 <!-- Favicon + PWA -->
-<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.7.1">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.7.1">
-<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.7.1">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.7.1">
-<link rel="manifest" href="./manifest.json?v=1.7.1">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.7.2">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.7.2">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.7.2">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.7.2">
+<link rel="manifest" href="./manifest.json?v=1.7.2">
 <meta name="theme-color" content="#c0392b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,7 +22,7 @@
 <meta property="og:url" content="https://cagoooo.github.io/Lungtan-DFC/viewer.html">
 <meta property="og:title" content="即時監票 — 龍潭國小 第 123 屆 自治市小市長選舉">
 <meta property="og:description" content="DFC 行動方案即時監票畫面 — 全校教室即時連線監看。">
-<meta property="og:image" content="https://cagoooo.github.io/Lungtan-DFC/og-preview.png?v=1.7.1">
+<meta property="og:image" content="https://cagoooo.github.io/Lungtan-DFC/og-preview.png?v=1.7.2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="zh_TW">
@@ -704,10 +704,22 @@
   }
   .lightbox-content {
     position: relative; z-index: 2;
-    max-width: 96vw; max-height: 88vh;
+    width: min(96vw, 1200px);
+    max-height: 94vh;
     display: flex; flex-direction: column;
-    align-items: center; gap: 16px;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 14px 18px;
+    overflow-y: auto;
+    overflow-x: hidden;
     animation: lb-pop .35s cubic-bezier(.34,1.56,.64,1);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,224,160,0.4) transparent;
+  }
+  .lightbox-content::-webkit-scrollbar { width: 8px; }
+  .lightbox-content::-webkit-scrollbar-thumb {
+    background: rgba(255,224,160,0.35);
+    border-radius: 4px;
   }
   @keyframes lb-pop {
     0% { transform: scale(.85); opacity: 0; }
@@ -715,16 +727,31 @@
   }
   .lightbox-img-wrap {
     position: relative;
-    max-width: 90vw; max-height: 72vh;
+    max-width: min(90vw, 1100px);
+    /* 海報區可彈性縮放：給下方 indicator + tabs + info 預留空間 */
+    max-height: 58vh;
+    flex: 0 1 auto;
     background: linear-gradient(135deg, #faf3ea, #efe4d4);
     border-radius: 16px; overflow: hidden;
     box-shadow: 0 20px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,224,160,.2) inset;
   }
   .lightbox-img-wrap img {
     display: block;
-    max-width: 90vw; max-height: 72vh;
+    max-width: 100%;
+    max-height: 58vh;
     width: auto; height: auto;
     object-fit: contain;
+  }
+  /* 矮螢幕（13" 筆電含工具列）海報壓更低，確保下方 tabs + info 看得到 */
+  @media (max-height: 800px) {
+    .lightbox-content { max-height: 96vh; padding: 8px 12px 14px; gap: 8px; }
+    .lightbox-img-wrap { max-height: 48vh; }
+    .lightbox-img-wrap img { max-height: 48vh; }
+  }
+  /* 超矮 / 平板橫向 */
+  @media (max-height: 600px) {
+    .lightbox-img-wrap { max-height: 42vh; }
+    .lightbox-img-wrap img { max-height: 42vh; }
   }
   .lightbox-empty {
     padding: 80px 60px;
@@ -1460,13 +1487,13 @@
 </div>
 
 <script type="module">
-import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.7.1';
+import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.7.2';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getDatabase, ref, onValue, set, push,
   onDisconnect, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-import { Sound } from './sound.js?v=1.7.1';
+import { Sound } from './sound.js?v=1.7.2';
 
 const root = document.getElementById('root');
 
@@ -2357,6 +2384,6 @@ function burstParticles(hostEl, isGold) {
 }
 </script>
 
-<script defer src="./version-check.js?v=1.7.1"></script>
+<script defer src="./version-check.js?v=1.7.2"></script>
 </body>
 </html>
