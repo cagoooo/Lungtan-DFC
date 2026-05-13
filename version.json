@@ -1,5 +1,5 @@
 {
-  "version": "1.4.4",
-  "released": "2026-05-13T13:40:08+08:00",
-  "notes": "v1.4.4: lightbox indicator dots moved between img and info, modern bar style"
+  "version": "1.4.5",
+  "released": "2026-05-13T13:53:04+08:00",
+  "notes": "v1.4.5: fullscreen scroll fix + adaptive compression for small screens"
 }
