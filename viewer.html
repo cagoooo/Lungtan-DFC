@@ -7,11 +7,11 @@
 <meta name="description" content="龍潭國小 第 123 屆 自治市小市長選舉 — DFC 行動方案即時監票畫面。本頁僅供觀看，無法進行投票操作。">
 
 <!-- Favicon + PWA -->
-<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.4.2">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.4.2">
-<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.4.2">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.4.2">
-<link rel="manifest" href="./manifest.json?v=1.4.2">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.4.3">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.4.3">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.4.3">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.4.3">
+<link rel="manifest" href="./manifest.json?v=1.4.3">
 <meta name="theme-color" content="#c0392b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,7 +22,7 @@
 <meta property="og:url" content="https://cagoooo.github.io/Lungtan-DFC/viewer.html">
 <meta property="og:title" content="即時監票 — 龍潭國小 第 123 屆 自治市小市長選舉">
 <meta property="og:description" content="DFC 行動方案即時監票畫面 — 全校教室即時連線監看。">
-<meta property="og:image" content="https://cagoooo.github.io/Lungtan-DFC/og-preview.png?v=1.4.2">
+<meta property="og:image" content="https://cagoooo.github.io/Lungtan-DFC/og-preview.png?v=1.4.3">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="zh_TW">
@@ -562,14 +562,37 @@
     margin-bottom: 6px; flex-wrap: wrap; justify-content: center;
   }
   .lightbox-rank {
-    background: rgba(212, 160, 23, 0.25);
-    color: var(--gold-light);
-    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 5px 14px;
     border-radius: 999px;
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 1px;
-    border: 1px solid rgba(212,160,23,.4);
+    border: 1px solid rgba(255,255,255,0.15);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .lightbox-rank.rank-1 {
+    background: linear-gradient(135deg, rgba(240,180,0,0.45), rgba(212,160,23,0.3));
+    color: #ffe0a0;
+    border-color: rgba(255,224,160,0.6);
+  }
+  .lightbox-rank.rank-2 {
+    background: rgba(180,180,180,0.3);
+    color: #f0f0f0;
+    border-color: rgba(220,220,220,0.4);
+  }
+  .lightbox-rank.rank-3 {
+    background: rgba(184,115,51,0.35);
+    color: #f5c89a;
+    border-color: rgba(220,160,90,0.5);
+  }
+  .lightbox-rank.waiting {
+    background: rgba(150,150,150,0.25);
+    color: rgba(255,255,255,0.85);
+    border-color: rgba(255,255,255,0.2);
   }
   .lightbox-number {
     display: inline-flex; align-items: center; justify-content: center;
@@ -1136,13 +1159,13 @@
 </div>
 
 <script type="module">
-import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.4.2';
+import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.4.3';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getDatabase, ref, onValue, set, push,
   onDisconnect, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-import { Sound } from './sound.js?v=1.4.2';
+import { Sound } from './sound.js?v=1.4.3';
 
 const root = document.getElementById('root');
 
@@ -1202,14 +1225,34 @@ function renderLightbox() {
     img.style.display = 'none';
     empty.style.display = 'block';
   }
-  // rank chip
-  const rank = p.__rank || '';
-  document.getElementById('lightbox-rank').textContent = rank ? ('第 ' + rank + ' 名') : '';
+  // rank chip — 跟卡片邏輯一致：總票數 = 0 → 待開票、個別 0 票 → 尚未得票、否則顯示名次（含獎牌）
+  const rankEl = document.getElementById('lightbox-rank');
+  const totalVotes = lightboxItems.reduce((s, x) => s + (Number(x.votes) || 0), 0);
+  const votes = Number(p.votes) || 0;
+  if (totalVotes === 0) {
+    rankEl.textContent = '⏳ 待開票';
+    rankEl.className = 'lightbox-rank waiting';
+  } else if (votes === 0) {
+    rankEl.textContent = '尚未得票';
+    rankEl.className = 'lightbox-rank waiting';
+  } else {
+    const medal = p.__rank === 1 ? '🥇 ' : p.__rank === 2 ? '🥈 ' : p.__rank === 3 ? '🥉 ' : '';
+    rankEl.textContent = `${medal}第 ${p.__rank} 名`;
+    rankEl.className = `lightbox-rank rank-${p.__rank > 3 ? 'other' : p.__rank}`;
+  }
   document.getElementById('lightbox-number').textContent = p.number || '';
   document.getElementById('lightbox-class').textContent = p.className || '';
   document.getElementById('lightbox-name').textContent = p.name || '（未命名方案）';
-  document.getElementById('lightbox-votes-num').textContent = p.votes || 0;
-  document.getElementById('lightbox-votes-pct').textContent = (p.__pct != null) ? '·  ' + p.__pct.toFixed(1) + '%' : '';
+  document.getElementById('lightbox-votes-num').textContent = votes;
+  // 百分比只在有票時顯示，0 票時隱藏避免「· 0.0%」雜訊
+  const pctEl = document.getElementById('lightbox-votes-pct');
+  if (totalVotes > 0 && votes > 0 && p.__pct != null) {
+    pctEl.textContent = '·  ' + p.__pct.toFixed(1) + '%';
+    pctEl.style.display = '';
+  } else {
+    pctEl.textContent = '';
+    pctEl.style.display = 'none';
+  }
   // indicator dots
   const ind = document.getElementById('lightbox-indicator');
   ind.innerHTML = lightboxItems.map((_, i) =>
@@ -1838,6 +1881,6 @@ function burstParticles(hostEl, isGold) {
 }
 </script>
 
-<script defer src="./version-check.js?v=1.4.2"></script>
+<script defer src="./version-check.js?v=1.4.3"></script>
 </body>
 </html>

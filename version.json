@@ -1,5 +1,5 @@
 {
-  "version": "1.4.2",
-  "released": "2026-05-13T13:24:41+08:00",
-  "notes": "v1.4.2: hotfix TDZ - dataRank used before declared in renderActions forEach"
+  "version": "1.4.3",
+  "released": "2026-05-13T13:31:43+08:00",
+  "notes": "v1.4.3: lightbox rank badge follow waiting state + medal icons + hide 0pct"
 }
