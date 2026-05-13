@@ -6,11 +6,11 @@
 <title>🔒 後台計票 — 龍潭國小 DFC 投票系統</title>
 
 <!-- Favicon + PWA -->
-<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.7.0">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.7.0">
-<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.7.0">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.7.0">
-<link rel="manifest" href="./manifest.json?v=1.7.0">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.7.1">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.7.1">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.7.1">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.7.1">
+<link rel="manifest" href="./manifest.json?v=1.7.1">
 <meta name="theme-color" content="#c0392b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -531,6 +531,57 @@
   }
 
   /* log / 時間軸 */
+  .log-chart-wrap {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+    padding: 14px 18px 18px;
+  }
+  .log-chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .log-chart-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    letter-spacing: 1px;
+  }
+  .log-chart-hint {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .log-chart-canvas-wrap {
+    position: relative;
+    height: 280px;
+    width: 100%;
+  }
+  .log-chart-canvas-wrap canvas { width: 100% !important; height: 100% !important; }
+  .log-chart-empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 13px;
+    background: linear-gradient(135deg, #faf3ea, #efe4d4);
+    border-radius: 10px;
+    border: 1px dashed var(--border);
+  }
+  @media (max-height: 1000px) {
+    .log-chart-canvas-wrap { height: 220px; }
+  }
+  @media (max-height: 820px) {
+    .log-chart-canvas-wrap { height: 180px; }
+    .log-chart-wrap { padding: 10px 14px 12px; margin-bottom: 10px; }
+  }
+
   .log-toolbar {
     display: flex; justify-content: space-between; align-items: center;
     background: #fff; padding: 14px 18px;
@@ -882,6 +933,19 @@
         <button class="btn btn-danger" id="log-clear-btn">🗑️ 清空時間軸</button>
       </div>
     </div>
+
+    <!-- 累積票數折線圖 -->
+    <div class="log-chart-wrap">
+      <div class="log-chart-header">
+        <span class="log-chart-title">📈 累積票數走勢</span>
+        <span class="log-chart-hint">每個方案一條線　·　hover 點查看當下時間</span>
+      </div>
+      <div class="log-chart-canvas-wrap">
+        <canvas id="log-chart"></canvas>
+        <div class="log-chart-empty" id="log-chart-empty">尚無資料 — 開始加票後會在這裡呈現走勢圖</div>
+      </div>
+    </div>
+
     <div class="log-list" id="log-list">
       <div class="log-empty">尚無任何操作紀錄。<br><small>進「計票」加減票後會出現在這裡。</small></div>
     </div>
@@ -949,7 +1013,7 @@
 <script type="module">
 import {
   firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META
-} from './firebase-config.js?v=1.7.0';
+} from './firebase-config.js?v=1.7.1';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getAuth, signInWithEmailAndPassword, signOut,
@@ -960,7 +1024,7 @@ import {
   runTransaction, onDisconnect, serverTimestamp,
   query, limitToLast, orderByChild
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-import { Sound } from './sound.js?v=1.7.0';
+import { Sound } from './sound.js?v=1.7.1';
 
 document.body.classList.remove('loading-app');
 
@@ -1525,6 +1589,9 @@ function switchView(name) {
   if (name === 'settings') {
     if (!editingActions) editingActions = JSON.parse(JSON.stringify(currentActions));
     renderSettings();
+  } else if (name === 'log') {
+    // 切到時間軸時重新渲染圖表（避免 canvas 在 display:none 時尺寸計算錯誤）
+    setTimeout(() => renderLogChart(currentLogItems), 50);
   }
 }
 
@@ -1609,6 +1676,7 @@ function renderLog(items) {
   document.getElementById('log-count').textContent = items.length + ' 筆';
   if (items.length === 0) {
     container.innerHTML = `<div class="log-empty">尚無任何操作紀錄。<br><small>進「計票」加減票後會出現在這裡。</small></div>`;
+    renderLogChart([]);
     return;
   }
   container.innerHTML = items.map(i => {
@@ -1632,6 +1700,167 @@ function renderLog(items) {
       </div>
     `;
   }).join('');
+  renderLogChart(items);
+}
+
+// ===== 累積票數折線圖（Chart.js）=====
+let logChartInstance = null;
+const LOG_CHART_COLORS = [
+  '#c0392b', // 紅 — 五年一班
+  '#2c5aa0', // 藍 — 五年二班
+  '#27ae60', // 綠 — 五年三班
+  '#e67e22', // 橘 — 五年四班
+  '#8e44ad', // 紫 — 五年五班
+  '#d4a017', // 金 — 五年六班
+  '#16a085', // 青
+  '#c0392b',
+];
+function renderLogChart(items) {
+  const canvas = document.getElementById('log-chart');
+  const emptyEl = document.getElementById('log-chart-empty');
+  if (!canvas || !emptyEl) return;
+
+  // 沒資料 / Chart.js 未載入 → 顯示空狀態
+  if (!items || items.length === 0 || !window.Chart) {
+    emptyEl.style.display = 'flex';
+    canvas.style.display = 'none';
+    if (logChartInstance) { logChartInstance.destroy(); logChartInstance = null; }
+    return;
+  }
+
+  // 時間舊→新 排序
+  const sorted = [...items].filter(i => i.ts && i.actionId)
+                           .sort((a, b) => (a.ts || 0) - (b.ts || 0));
+  if (sorted.length === 0) {
+    emptyEl.style.display = 'flex';
+    canvas.style.display = 'none';
+    if (logChartInstance) { logChartInstance.destroy(); logChartInstance = null; }
+    return;
+  }
+
+  // 為每個方案累積一條時間序列
+  const t0 = sorted[0].ts;
+  const byAction = {}; // actionId -> { name, points: [{x: sec, y: votes, raw: ts}] }
+  // 用「寫入後票數」為準（i.voteAfter）— 比累加 delta 更可靠（不受漏 log 影響）
+  sorted.forEach(i => {
+    const id = i.actionId;
+    if (!byAction[id]) {
+      byAction[id] = {
+        name: `${i.number || '?'}. ${i.className || ''} ${i.name || ''}`.trim(),
+        number: i.number || 0,
+        points: [{ x: 0, y: 0, raw: t0 }],  // 從 0 票開始畫一條基線
+      };
+    }
+    const sec = (i.ts - t0) / 1000;
+    const votes = (i.voteAfter != null) ? Number(i.voteAfter) : null;
+    if (votes != null) {
+      byAction[id].points.push({ x: sec, y: votes, raw: i.ts });
+    }
+  });
+
+  // 排序 dataset 用 number 升序（顏色固定對應）
+  const ids = Object.keys(byAction).sort((a, b) =>
+    (byAction[a].number || 0) - (byAction[b].number || 0));
+
+  const datasets = ids.map((id, idx) => {
+    const color = LOG_CHART_COLORS[idx % LOG_CHART_COLORS.length];
+    return {
+      label: byAction[id].name,
+      data: byAction[id].points.map(p => ({ x: p.x, y: p.y })),
+      borderColor: color,
+      backgroundColor: color + '22',
+      pointBackgroundColor: color,
+      pointBorderColor: '#fff',
+      borderWidth: 2.5,
+      pointRadius: 3,
+      pointHoverRadius: 6,
+      tension: 0,  // 不平滑（折線真實反映加票時刻）
+      stepped: false,
+    };
+  });
+
+  // 銷毀舊 chart
+  if (logChartInstance) { logChartInstance.destroy(); logChartInstance = null; }
+
+  emptyEl.style.display = 'none';
+  canvas.style.display = 'block';
+  logChartInstance = new window.Chart(canvas, {
+    type: 'line',
+    data: { datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'nearest', intersect: false, axis: 'x' },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            font: { size: 12, family: 'Noto Sans TC, system-ui, sans-serif' },
+            padding: 10,
+            usePointStyle: true,
+            boxWidth: 8,
+          },
+        },
+        tooltip: {
+          backgroundColor: 'rgba(43, 43, 43, 0.95)',
+          titleFont: { size: 13, weight: 'bold' },
+          bodyFont: { size: 12 },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            title: (ctx) => {
+              if (!ctx || !ctx[0]) return '';
+              const x = ctx[0].parsed.x;
+              const realTs = t0 + x * 1000;
+              const d = new Date(realTs);
+              return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+            },
+            label: (ctx) => `${ctx.dataset.label}：${ctx.parsed.y} 票`,
+          },
+        },
+      },
+      scales: {
+        x: {
+          type: 'linear',
+          title: {
+            display: true,
+            text: '時間（從開票起算）',
+            font: { size: 11, family: 'Noto Sans TC, system-ui, sans-serif' },
+            color: '#777',
+          },
+          ticks: {
+            callback: (v) => {
+              const totalSec = Math.max(0, v);
+              const m = Math.floor(totalSec / 60);
+              const s = Math.floor(totalSec % 60);
+              return m > 0 ? `${m}分${s.toString().padStart(2,'0')}秒` : `${s}秒`;
+            },
+            font: { size: 10 },
+            color: '#999',
+            maxRotation: 0,
+          },
+          grid: { color: 'rgba(0,0,0,0.05)' },
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: '累積票數',
+            font: { size: 11, family: 'Noto Sans TC, system-ui, sans-serif' },
+            color: '#777',
+          },
+          ticks: {
+            stepSize: 1,
+            font: { size: 11 },
+            color: '#999',
+            precision: 0,
+          },
+          grid: { color: 'rgba(0,0,0,0.05)' },
+        },
+      },
+      animation: { duration: 600, easing: 'easeOutCubic' },
+    },
+  });
 }
 
 function downloadFile(content, filename, mime) {
@@ -1783,6 +2012,9 @@ printStyle.textContent = `
 document.head.appendChild(printStyle);
 </script>
 
-<script defer src="./version-check.js?v=1.7.0"></script>
+<!-- Chart.js for 時間軸折線圖 -->
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+
+<script defer src="./version-check.js?v=1.7.1"></script>
 </body>
 </html>
