@@ -7,11 +7,11 @@
 <meta name="description" content="龍潭國小 第 123 屆 自治市小市長選舉 — DFC 行動方案即時監票畫面。本頁僅供觀看，無法進行投票操作。">
 
 <!-- Favicon + PWA -->
-<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.4.6">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.4.6">
-<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.4.6">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.4.6">
-<link rel="manifest" href="./manifest.json?v=1.4.6">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.5.0">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.5.0">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.5.0">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.5.0">
+<link rel="manifest" href="./manifest.json?v=1.5.0">
 <meta name="theme-color" content="#c0392b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,7 +22,7 @@
 <meta property="og:url" content="https://cagoooo.github.io/Lungtan-DFC/viewer.html">
 <meta property="og:title" content="即時監票 — 龍潭國小 第 123 屆 自治市小市長選舉">
 <meta property="og:description" content="DFC 行動方案即時監票畫面 — 全校教室即時連線監看。">
-<meta property="og:image" content="https://cagoooo.github.io/Lungtan-DFC/og-preview.png?v=1.4.6">
+<meta property="og:image" content="https://cagoooo.github.io/Lungtan-DFC/og-preview.png?v=1.5.0">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="zh_TW">
@@ -580,6 +580,75 @@
     color: var(--muted);
     text-align: center;
     font-size: 16px;
+  }
+  /* 影片 iframe 區（16:9） */
+  .lightbox-video-wrap {
+    width: min(90vw, 1100px);
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 80px rgba(0,0,0,.6);
+  }
+  .lightbox-video-wrap iframe {
+    width: 100%; height: 100%; border: 0; display: block;
+  }
+  /* tabs 切換按鈕：海報 / 政見內容 / 影片 */
+  .lightbox-tabs {
+    display: flex;
+    gap: 6px;
+    background: rgba(0,0,0,0.35);
+    padding: 5px;
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .lightbox-tab-btn {
+    border: 0;
+    background: transparent;
+    color: rgba(255,255,255,0.75);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .2s;
+  }
+  .lightbox-tab-btn:hover:not(.active):not(:disabled) {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+  }
+  .lightbox-tab-btn.active {
+    background: linear-gradient(135deg, #f0b400, #d4a017);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(212,160,23,0.35);
+  }
+  .lightbox-tab-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  /* 政見內容文字區 */
+  .lightbox-bio {
+    margin-top: 10px;
+    padding: 12px 16px;
+    background: rgba(0,0,0,0.25);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    text-align: left;
+    color: rgba(255,255,255,0.95);
+    font-size: 14px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .lightbox-bio:empty,
+  .lightbox-bio[data-empty="1"] {
+    color: rgba(255,255,255,0.5);
+    font-style: italic;
+    font-size: 13px;
   }
   .lightbox-info {
     color: #fff;
@@ -1162,11 +1231,21 @@
   <button class="lightbox-nav lightbox-prev" id="lightbox-prev" title="上一張 (←)" aria-label="上一張">‹</button>
   <button class="lightbox-nav lightbox-next" id="lightbox-next" title="下一張 (→)" aria-label="下一張">›</button>
   <div class="lightbox-content">
-    <div class="lightbox-img-wrap">
-      <img id="lightbox-img" src="" alt="">
-      <div class="lightbox-empty" id="lightbox-empty" style="display:none;">（此方案尚未上傳照片）</div>
+    <div class="lightbox-media">
+      <div class="lightbox-img-wrap" id="lightbox-img-wrap">
+        <img id="lightbox-img" src="" alt="">
+        <div class="lightbox-empty" id="lightbox-empty" style="display:none;">（此方案尚未上傳照片）</div>
+      </div>
+      <div class="lightbox-video-wrap" id="lightbox-video-wrap" style="display:none;">
+        <iframe id="lightbox-video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+      </div>
     </div>
     <div class="lightbox-indicator" id="lightbox-indicator"></div>
+    <div class="lightbox-tabs" id="lightbox-tabs">
+      <button class="lightbox-tab-btn active" data-tab="photo">🖼️ 海報</button>
+      <button class="lightbox-tab-btn" data-tab="bio">📖 政見內容</button>
+      <button class="lightbox-tab-btn" data-tab="video">🎬 影片</button>
+    </div>
     <div class="lightbox-info">
       <div class="lightbox-rank-row">
         <span class="lightbox-rank" id="lightbox-rank"></span>
@@ -1179,6 +1258,7 @@
         <span class="lightbox-votes-label">票</span>
         <span class="lightbox-votes-pct" id="lightbox-votes-pct"></span>
       </div>
+      <div class="lightbox-bio" id="lightbox-bio" style="display:none;"></div>
     </div>
   </div>
   <div class="lightbox-hint">← → 切換 · ESC 關閉</div>
@@ -1200,13 +1280,13 @@
 </div>
 
 <script type="module">
-import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.4.6';
+import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.5.0';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getDatabase, ref, onValue, set, push,
   onDisconnect, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-import { Sound } from './sound.js?v=1.4.6';
+import { Sound } from './sound.js?v=1.5.0';
 
 const root = document.getElementById('root');
 
@@ -1233,12 +1313,21 @@ document.getElementById('sound-btn').addEventListener('click', () => {
 // ===== Lightbox 海報放大 =====
 let lightboxItems = [];   // 永遠用 byVotes 順序
 let lightboxIdx = 0;
+let lightboxTab = 'photo'; // 'photo' | 'bio' | 'video'
+
+// YouTube URL → embed URL
+function getYouTubeEmbed(url) {
+  if (!url || typeof url !== 'string') return '';
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+  return m ? `https://www.youtube.com/embed/${m[1]}` : '';
+}
 
 function openLightbox(itemId) {
   if (!lightboxItems.length) return;
   const idx = lightboxItems.findIndex(p => (p.id || p.number) === itemId);
   if (idx < 0) return;
   lightboxIdx = idx;
+  lightboxTab = 'photo'; // 每次開啟回到海報 tab
   renderLightbox();
   document.getElementById('lightbox').style.display = 'flex';
   document.body.style.overflow = 'hidden';
@@ -1246,10 +1335,18 @@ function openLightbox(itemId) {
 function closeLightbox() {
   document.getElementById('lightbox').style.display = 'none';
   document.body.style.overflow = '';
+  // 清空 iframe src 避免影片在背景繼續播
+  const iframe = document.getElementById('lightbox-video');
+  if (iframe) iframe.src = '';
 }
 function navLightbox(delta) {
   if (!lightboxItems.length) return;
   lightboxIdx = (lightboxIdx + delta + lightboxItems.length) % lightboxItems.length;
+  lightboxTab = 'photo'; // 切換方案時回到海報 tab（避免切到沒影片的方案還留在影片 tab）
+  renderLightbox();
+}
+function switchLightboxTab(tab) {
+  lightboxTab = tab;
   renderLightbox();
 }
 function renderLightbox() {
@@ -1265,6 +1362,49 @@ function renderLightbox() {
   } else {
     img.style.display = 'none';
     empty.style.display = 'block';
+  }
+
+  // ===== 三個 tab 狀態 =====
+  const hasBio = !!(p.description && p.description.trim());
+  const hasVideo = !!getYouTubeEmbed(p.videoUrl);
+
+  // 沒有資料的 tab 自動 disable + 自動切回有資料的 tab
+  if (lightboxTab === 'bio' && !hasBio) lightboxTab = 'photo';
+  if (lightboxTab === 'video' && !hasVideo) lightboxTab = 'photo';
+
+  // 更新 tab buttons 狀態
+  document.querySelectorAll('.lightbox-tab-btn').forEach(btn => {
+    const t = btn.dataset.tab;
+    btn.classList.toggle('active', t === lightboxTab);
+    btn.disabled = (t === 'bio' && !hasBio) || (t === 'video' && !hasVideo);
+    btn.title = btn.disabled
+      ? (t === 'bio' ? '此方案尚未填寫政見內容' : '此方案尚未提供影片連結')
+      : '';
+  });
+
+  // 切換 media 顯示
+  const imgWrap = document.getElementById('lightbox-img-wrap');
+  const videoWrap = document.getElementById('lightbox-video-wrap');
+  const iframe = document.getElementById('lightbox-video');
+  if (lightboxTab === 'video') {
+    imgWrap.style.display = 'none';
+    videoWrap.style.display = 'block';
+    const embedUrl = getYouTubeEmbed(p.videoUrl) + '?autoplay=1&rel=0';
+    if (iframe.src !== embedUrl) iframe.src = embedUrl;
+  } else {
+    imgWrap.style.display = '';
+    videoWrap.style.display = 'none';
+    if (iframe.src) iframe.src = ''; // 停止背景播放
+  }
+
+  // bio 區顯示 / 隱藏
+  const bioEl = document.getElementById('lightbox-bio');
+  if (lightboxTab === 'bio' && hasBio) {
+    bioEl.textContent = p.description;
+    bioEl.style.display = '';
+    bioEl.removeAttribute('data-empty');
+  } else {
+    bioEl.style.display = 'none';
   }
   // rank chip — 跟卡片邏輯一致：總票數 = 0 → 待開票、個別 0 票 → 尚未得票、否則顯示名次（含獎牌）
   const rankEl = document.getElementById('lightbox-rank');
@@ -1308,7 +1448,13 @@ document.getElementById('lightbox-indicator').addEventListener('click', e => {
   const dot = e.target.closest('.dot');
   if (!dot) return;
   lightboxIdx = Number(dot.dataset.idx);
+  lightboxTab = 'photo'; // 切方案回海報 tab
   renderLightbox();
+});
+document.getElementById('lightbox-tabs').addEventListener('click', e => {
+  const btn = e.target.closest('.lightbox-tab-btn');
+  if (!btn || btn.disabled) return;
+  switchLightboxTab(btn.dataset.tab);
 });
 
 // ===== 排序模式 =====
@@ -1922,6 +2068,6 @@ function burstParticles(hostEl, isGold) {
 }
 </script>
 
-<script defer src="./version-check.js?v=1.4.6"></script>
+<script defer src="./version-check.js?v=1.5.0"></script>
 </body>
 </html>

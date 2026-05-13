@@ -1,5 +1,5 @@
 {
-  "version": "1.4.6",
-  "released": "2026-05-13T13:59:24+08:00",
-  "notes": "v1.4.6: admin one-click finale button toggle locked state directly from count tab"
+  "version": "1.5.0",
+  "released": "2026-05-13T14:13:01+08:00",
+  "notes": "v1.5.0: action description + YouTube video tabs in lightbox"
 }

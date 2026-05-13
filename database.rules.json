@@ -8,9 +8,11 @@
           "votes":     { ".validate": "newData.isNumber() && newData.val() >= 0" },
           "number":    { ".validate": "newData.isNumber()" },
           "id":        { ".validate": "newData.isNumber()" },
-          "name":      { ".validate": "newData.isString() && newData.val().length <= 60" },
-          "className": { ".validate": "newData.isString() && newData.val().length <= 30" },
-          "photo":     { ".validate": "newData.isString() && newData.val().length <= 2000000" }
+          "name":        { ".validate": "newData.isString() && newData.val().length <= 60" },
+          "className":   { ".validate": "newData.isString() && newData.val().length <= 30" },
+          "photo":       { ".validate": "newData.isString() && newData.val().length <= 2000000" },
+          "description": { ".validate": "newData.isString() && newData.val().length <= 3000" },
+          "videoUrl":    { ".validate": "newData.isString() && newData.val().length <= 500" }
         }
       },
       "meta": {
