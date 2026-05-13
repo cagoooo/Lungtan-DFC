@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🔒 後台計票 — 龍潭國小 DFC 投票系統</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.1.0">
+<link rel="apple-touch-icon" href="./favicon.svg?v=1.1.0">
+
+<!-- 後台不需 OG share，避免被搜尋引擎索引 -->
+<meta name="robots" content="noindex, nofollow">
+
 <style>
   :root {
     --primary: #c0392b;
@@ -17,7 +25,7 @@
     --border: #e6dccf;
     --shadow: 0 4px 14px rgba(0,0,0,0.08);
     --shadow-lg: 0 12px 28px rgba(0,0,0,0.14);
-    --radius: 14px;
+    --radius: 12px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
@@ -28,9 +36,9 @@
   }
   body { min-height: 100vh; }
   .app {
-    max-width: 1280px;
+    max-width: 1600px;
     margin: 0 auto;
-    padding: 16px 20px 60px;
+    padding: 12px 16px 40px;
   }
 
   /* ===== login ===== */
@@ -51,76 +59,33 @@
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     text-align: center;
   }
-  .login-icon {
-    font-size: 48px;
-    margin-bottom: 10px;
-  }
-  .login-card h1 {
-    font-size: 24px;
-    color: var(--primary-dark);
-    margin-bottom: 6px;
-  }
-  .login-card .sub {
-    color: var(--muted);
-    font-size: 14px;
-    margin-bottom: 22px;
-  }
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    text-align: left;
-  }
-  .login-form label {
-    font-size: 13px;
-    color: var(--muted);
-    font-weight: 600;
-    margin-bottom: -4px;
-  }
+  .login-icon { font-size: 48px; margin-bottom: 10px; }
+  .login-card h1 { font-size: 24px; color: var(--primary-dark); margin-bottom: 6px; }
+  .login-card .sub { color: var(--muted); font-size: 14px; margin-bottom: 22px; }
+  .login-form { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+  .login-form label { font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: -4px; }
   .login-form input {
-    padding: 12px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    font-size: 16px;
-    font-family: inherit;
+    padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+    font-size: 16px; font-family: inherit;
   }
-  .login-form input:focus {
-    outline: none;
-    border-color: var(--primary);
-  }
+  .login-form input:focus { outline: none; border-color: var(--primary); }
   .login-form button {
-    margin-top: 8px;
-    padding: 13px;
-    background: var(--primary);
-    color: #fff;
-    border: 0;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
+    margin-top: 8px; padding: 13px;
+    background: var(--primary); color: #fff; border: 0; border-radius: 8px;
+    font-size: 16px; font-weight: 700; cursor: pointer; font-family: inherit;
     transition: all .15s;
-    font-family: inherit;
   }
   .login-form button:hover { background: var(--primary-dark); }
   .login-form button:disabled { opacity: 0.5; cursor: not-allowed; }
   .login-error {
-    background: #fde8e6;
-    color: var(--primary-dark);
-    padding: 10px 14px;
-    border-radius: 6px;
-    font-size: 13px;
-    margin-bottom: 4px;
-    display: none;
+    background: #fde8e6; color: var(--primary-dark);
+    padding: 10px 14px; border-radius: 6px;
+    font-size: 13px; margin-bottom: 4px; display: none;
   }
   .login-error.show { display: block; }
-  .login-back {
-    text-align: center;
-    margin-top: 18px;
-    font-size: 13px;
-  }
+  .login-back { text-align: center; margin-top: 18px; font-size: 13px; }
   .login-back a {
-    color: var(--muted);
-    text-decoration: none;
+    color: var(--muted); text-decoration: none;
     border-bottom: 1px dotted currentColor;
   }
   .login-back a:hover { color: var(--primary); border-bottom-color: var(--primary); }
@@ -130,84 +95,56 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     flex-wrap: wrap;
-    padding: 14px 0 16px;
+    padding: 10px 0 12px;
     border-bottom: 3px solid var(--primary);
-    margin-bottom: 18px;
+    margin-bottom: 12px;
   }
   .app-header h1 {
-    font-size: 22px;
-    color: var(--primary-dark);
-    letter-spacing: 1px;
+    font-size: 20px; color: var(--primary-dark); letter-spacing: 1px;
   }
   .app-header h1 small {
-    display: block;
-    font-size: 13px;
-    color: var(--muted);
-    font-weight: normal;
-    margin-top: 4px;
-    letter-spacing: 0;
+    display: block; font-size: 12px; color: var(--muted);
+    font-weight: normal; margin-top: 2px; letter-spacing: 0;
   }
-  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .header-right {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  }
   .tabs {
-    display: flex;
-    gap: 6px;
-    background: #fff;
-    padding: 4px;
-    border-radius: 999px;
-    box-shadow: var(--shadow);
+    display: flex; gap: 6px; background: #fff; padding: 4px;
+    border-radius: 999px; box-shadow: var(--shadow);
   }
   .tab-btn {
-    border: 0;
-    background: transparent;
-    color: var(--muted);
-    font-size: 15px;
-    font-weight: 600;
-    padding: 8px 20px;
-    border-radius: 999px;
-    cursor: pointer;
-    font-family: inherit;
+    border: 0; background: transparent; color: var(--muted);
+    font-size: 14px; font-weight: 600; padding: 6px 16px;
+    border-radius: 999px; cursor: pointer; font-family: inherit;
     transition: all .2s;
   }
   .tab-btn.active {
-    background: var(--primary);
-    color: #fff;
+    background: var(--primary); color: #fff;
     box-shadow: 0 2px 8px rgba(192,57,43,0.3);
   }
   .tab-btn:hover:not(.active) { background: #f0e6dc; color: var(--text); }
+  .header-link, .icon-btn {
+    text-decoration: none; padding: 6px 12px; border-radius: 999px;
+    background: #fff; color: var(--text);
+    font-weight: 600; font-size: 12px; box-shadow: var(--shadow);
+    border: 0; cursor: pointer; font-family: inherit;
+  }
+  .header-link:hover, .icon-btn:hover { background: #f5ebe0; }
+  .icon-btn.muted { background: #f5ebe0; color: var(--muted); text-decoration: line-through; }
   .header-info {
-    font-size: 12px;
-    color: var(--muted);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    font-size: 12px; color: var(--muted);
+    display: flex; flex-direction: column; align-items: flex-end;
   }
   .header-info .who { color: var(--text); font-weight: 600; }
   .logout-btn {
-    border: 0;
-    padding: 7px 14px;
-    border-radius: 999px;
-    background: #fff;
-    color: var(--text);
-    font-weight: 600;
-    cursor: pointer;
-    font-family: inherit;
-    box-shadow: var(--shadow);
-    font-size: 13px;
+    border: 0; padding: 5px 10px; border-radius: 999px;
+    background: #fff; color: var(--text); font-weight: 600; cursor: pointer;
+    font-family: inherit; box-shadow: var(--shadow); font-size: 11px;
   }
   .logout-btn:hover { background: #f5ebe0; }
-  .header-link {
-    text-decoration: none;
-    padding: 7px 14px;
-    border-radius: 999px;
-    background: #fff;
-    color: var(--text);
-    font-weight: 600;
-    font-size: 13px;
-    box-shadow: var(--shadow);
-  }
-  .header-link:hover { background: #f5ebe0; }
 
   /* ===== views ===== */
   .view { display: none; }
@@ -215,179 +152,183 @@
 
   /* ===== summary ===== */
   .summary {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #fff;
-    padding: 14px 22px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: #fff; padding: 10px 18px;
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    margin-bottom: 12px; flex-wrap: wrap; gap: 10px;
   }
-  .summary-info { display: flex; align-items: baseline; gap: 14px; }
-  .summary-info .label { color: var(--muted); font-size: 14px; }
+  .summary-info { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .summary-info .label { color: var(--muted); font-size: 13px; }
   .summary-info .total {
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--primary);
+    font-size: 26px; font-weight: 800; color: var(--primary);
     font-variant-numeric: tabular-nums;
   }
-  .summary-info .total-suffix { font-size: 14px; color: var(--muted); }
+  .summary-info .total-suffix { font-size: 13px; color: var(--muted); }
   .live-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    background: #e8f5ea;
-    color: #2c8a3e;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; background: #e8f5ea; color: #2c8a3e;
+    border-radius: 999px; font-size: 11px; font-weight: 600;
   }
   .live-pill.offline { background: #fde8e6; color: var(--primary-dark); }
   .live-pill .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #2c8a3e;
-    animation: pulse 1.6s infinite;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #2c8a3e; animation: pulse 1.6s infinite;
   }
   .live-pill.offline .dot { background: var(--primary); }
   @keyframes pulse {
-    0%   { box-shadow: 0 0 0 0 rgba(44,138,62,0.5); }
-    70%  { box-shadow: 0 0 0 6px rgba(44,138,62,0); }
+    0% { box-shadow: 0 0 0 0 rgba(44,138,62,0.5); }
+    70% { box-shadow: 0 0 0 6px rgba(44,138,62,0); }
     100% { box-shadow: 0 0 0 0 rgba(44,138,62,0); }
   }
 
-  .summary-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .summary-actions { display: flex; gap: 6px; flex-wrap: wrap; }
   .btn {
-    border: 0;
-    padding: 9px 18px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-    font-family: inherit;
+    border: 0; padding: 7px 14px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: all 0.15s; font-family: inherit;
   }
   .btn-ghost { background: #f5ebe0; color: #6b4423; }
   .btn-ghost:hover { background: #ead7c1; }
   .btn-danger {
-    background: #fff;
-    color: var(--primary);
-    border: 1.5px solid var(--primary);
+    background: #fff; color: var(--primary); border: 1.5px solid var(--primary);
   }
   .btn-danger:hover { background: var(--primary); color: #fff; }
   .btn-primary { background: var(--primary); color: #fff; }
   .btn-primary:hover { background: var(--primary-dark); }
 
-  /* ===== cards ===== */
+  /* ===== cards 緊湊 grid（一螢幕看完 6 個） ===== */
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
   }
+  @media (max-width: 1100px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px)  { .cards { grid-template-columns: 1fr; } }
+
   .card {
     background: var(--card-bg);
     border-radius: var(--radius);
     overflow: hidden;
     box-shadow: var(--shadow);
-    display: flex;
-    flex-direction: column;
-    transition: transform .15s, box-shadow .15s;
+    display: grid;
+    grid-template-rows: 90px 1fr auto;
+    transition: all .25s cubic-bezier(.34,1.56,.64,1);
+    position: relative;
   }
-  .card:hover { box-shadow: var(--shadow-lg); }
+  .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+  .card.card-leader {
+    background: linear-gradient(135deg, #fff8e5 0%, #fff 60%);
+    border: 1.5px solid var(--gold);
+    box-shadow: 0 6px 20px rgba(212,160,23,0.2);
+  }
+  .card.card-leader::before {
+    content: "👑";
+    position: absolute;
+    top: 6px; right: 8px;
+    font-size: 18px;
+    z-index: 2;
+    animation: crown-bob 2s ease-in-out infinite;
+  }
+  @keyframes crown-bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-3px); }
+  }
+  .card.card-tied {
+    background: linear-gradient(135deg, #fff5e0 0%, #fff 60%);
+    border: 1.5px solid var(--gold);
+  }
+  .card.card-tied::before {
+    content: "🤝";
+    position: absolute;
+    top: 6px; right: 8px;
+    font-size: 18px;
+    z-index: 2;
+  }
+  /* 加票時整卡光暈 */
+  .card.bumping { animation: card-bump .7s ease-out; }
+  @keyframes card-bump {
+    0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(231,76,60, 0); }
+    20%  { transform: scale(1.03); }
+    40%  { box-shadow: 0 0 24px 8px rgba(231,76,60, 0.5); }
+    100% { transform: scale(1); box-shadow: var(--shadow); }
+  }
+  .card.card-leader.bumping,
+  .card.card-tied.bumping { animation: card-bump-gold .7s ease-out; }
+  @keyframes card-bump-gold {
+    0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(212,160,23, 0); }
+    20%  { transform: scale(1.04); }
+    40%  { box-shadow: 0 0 28px 10px rgba(212,160,23, 0.6); }
+    100% { transform: scale(1); box-shadow: 0 6px 20px rgba(212,160,23,0.2); }
+  }
+
   .card-photo-frame {
     width: 100%;
-    aspect-ratio: 16 / 9;
+    height: 90px;
     background: linear-gradient(135deg, #faf3ea, #efe4d4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     overflow: hidden;
   }
   .card-photo {
     max-width: 100%; max-height: 100%;
-    width: auto; height: auto;
-    object-fit: contain;
-    display: block;
+    object-fit: contain; display: block;
   }
   .card-photo-empty {
-    color: var(--muted);
-    font-size: 13px;
-    padding: 16px;
-    text-align: center;
+    color: var(--muted); font-size: 11px; padding: 8px; text-align: center;
   }
   .card-body {
-    padding: 14px 18px 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    flex: 1;
+    padding: 8px 12px 6px;
+    display: flex; flex-direction: column;
+    gap: 4px; min-height: 0;
   }
+  .card-header-row { display: flex; align-items: center; gap: 6px; }
   .card-number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px; height: 36px;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px;
     border-radius: 50%;
-    background: var(--primary);
-    color: #fff;
-    font-weight: 800;
-    font-size: 18px;
-    box-shadow: 0 2px 6px rgba(192,57,43,0.3);
+    background: var(--primary); color: #fff;
+    font-weight: 800; font-size: 14px;
+    flex-shrink: 0;
   }
-  .card-header-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 4px;
+  .card-class {
+    color: var(--accent); font-size: 12px; font-weight: 600;
   }
-  .card-class { color: var(--accent); font-size: 13px; font-weight: 600; }
   .card-name {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1.4;
-    margin: 2px 0 8px;
-    min-height: 2.8em;
+    font-size: 14px; font-weight: 700;
+    color: var(--text); line-height: 1.3;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
   .card-votes {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
     align-items: center;
-    justify-content: space-between;
-    margin-top: auto;
-    padding-top: 10px;
+    padding: 8px 12px 10px;
     border-top: 1px dashed var(--border);
+    gap: 8px;
+    position: relative;
   }
   .vote-count {
-    font-size: 44px;
-    font-weight: 900;
-    color: var(--primary);
-    font-variant-numeric: tabular-nums;
+    font-size: 34px; font-weight: 900;
+    color: var(--primary); font-variant-numeric: tabular-nums;
     line-height: 1;
-    transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
   }
-  .vote-count.bump { transform: scale(1.4); color: var(--accent); }
-  .vote-count-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-  .vote-count-wrap { display: flex; flex-direction: column; align-items: flex-start; }
-  .vote-buttons { display: flex; gap: 8px; }
+  .card-leader .vote-count, .card-tied .vote-count { color: var(--gold); }
+  .vote-count.bump { transform: scale(1.4); }
+  .vote-count-label { font-size: 10px; color: var(--muted); margin-bottom: 2px; }
+  .vote-buttons { display: flex; gap: 6px; align-items: center; }
   .btn-plus {
-    width: 64px; height: 64px;
+    width: 52px; height: 52px;
     border-radius: 50%;
     border: 0;
     background: linear-gradient(135deg, #e74c3c, #c0392b);
-    color: #fff;
-    font-size: 36px;
-    font-weight: 300;
-    cursor: pointer;
+    color: #fff; font-size: 28px; font-weight: 300; cursor: pointer;
     box-shadow: 0 4px 12px rgba(192,57,43,0.4);
     transition: all .15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1; position: relative; overflow: hidden;
   }
   .btn-plus:hover:not(:disabled) {
     transform: translateY(-2px);
@@ -395,205 +336,191 @@
   }
   .btn-plus:active:not(:disabled) { transform: scale(0.92); }
   .btn-plus:disabled { opacity: 0.4; cursor: not-allowed; }
+  /* ripple effect */
+  .btn-plus .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.6);
+    transform: scale(0);
+    animation: ripple .6s ease-out;
+    pointer-events: none;
+  }
+  @keyframes ripple {
+    to { transform: scale(4); opacity: 0; }
+  }
   .btn-minus {
-    width: 36px; height: 36px;
+    width: 30px; height: 30px;
     border-radius: 50%;
     border: 1.5px solid var(--border);
-    background: #fff;
-    color: var(--muted);
-    font-size: 22px;
-    cursor: pointer;
+    background: #fff; color: var(--muted);
+    font-size: 18px; cursor: pointer;
     transition: all .15s;
-    align-self: flex-end;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     line-height: 1;
   }
   .btn-minus:hover:not(:disabled) { background: #f5ebe0; color: var(--text); }
   .btn-minus:disabled { opacity: 0.3; cursor: not-allowed; }
 
+  /* 加票飛字 */
+  .float-plus {
+    position: fixed;
+    color: var(--primary);
+    font-size: 32px;
+    font-weight: 900;
+    pointer-events: none;
+    z-index: 999;
+    text-shadow: 0 2px 8px rgba(192,57,43,0.4);
+    animation: float-up 1s ease-out forwards;
+  }
+  @keyframes float-up {
+    0%   { transform: translate(-50%, 0) scale(0.5); opacity: 1; }
+    50%  { transform: translate(-50%, -40px) scale(1.3); opacity: 1; }
+    100% { transform: translate(-50%, -90px) scale(1); opacity: 0; }
+  }
+
+  /* 粒子噴發 */
+  .particles {
+    position: fixed; pointer-events: none; z-index: 5;
+    width: 0; height: 0;
+  }
+  .particle {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    opacity: 0;
+    animation: particle-burst .6s ease-out forwards;
+  }
+  @keyframes particle-burst {
+    0%   { transform: translate(0, 0) scale(0); opacity: 1; }
+    50%  { opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+  }
+
   /* lock banner */
   .lock-banner {
-    background: #fde8e6;
-    color: var(--primary-dark);
+    background: #fde8e6; color: var(--primary-dark);
     border-left: 4px solid var(--primary);
-    padding: 12px 18px;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    font-size: 14px;
-    font-weight: 600;
+    padding: 10px 16px; border-radius: 8px;
+    margin-bottom: 12px; font-size: 13px; font-weight: 600;
   }
 
   /* settings */
   .settings-section {
-    background: #fff;
-    padding: 18px 22px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    margin-bottom: 18px;
+    background: #fff; padding: 16px 20px;
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    margin-bottom: 14px;
   }
   .settings-section h3 {
-    margin-bottom: 12px;
-    font-size: 16px;
-    color: var(--primary-dark);
+    margin-bottom: 10px; font-size: 15px; color: var(--primary-dark);
   }
-  .settings-section .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
-  .settings-section label { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .settings-section .row {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    align-items: center; margin-bottom: 8px;
+  }
+  .settings-section label { font-size: 12px; color: var(--muted); font-weight: 600; }
   .settings-section input[type="text"], .settings-section input[type="number"] {
-    padding: 7px 10px;
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: inherit;
+    padding: 6px 10px; border: 1.5px solid var(--border);
+    border-radius: 6px; font-size: 13px; font-family: inherit;
   }
-  .settings-section input[type="text"] { width: 320px; max-width: 100%; }
-  .settings-section input[type="number"] { width: 72px; }
+  .settings-section input[type="text"] { width: 300px; max-width: 100%; }
+  .settings-section input[type="number"] { width: 64px; }
   .settings-section .hint {
-    font-size: 13px;
-    color: var(--muted);
-    margin-top: 8px;
-    line-height: 1.6;
+    font-size: 12px; color: var(--muted);
+    margin-top: 6px; line-height: 1.6;
   }
-
   .settings-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 16px;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 12px;
   }
   .setting-card {
-    background: #fff;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 16px;
-    display: flex;
-    gap: 14px;
+    background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 14px; display: flex; gap: 12px;
   }
   .setting-photo-col {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: center;
-    flex-shrink: 0;
+    display: flex; flex-direction: column;
+    gap: 6px; align-items: center; flex-shrink: 0;
   }
   .setting-photo-preview {
-    width: 120px; height: 80px;
-    border-radius: 10px;
-    object-fit: contain;
+    width: 100px; height: 70px;
+    border-radius: 8px; object-fit: contain;
     background: linear-gradient(135deg, #faf3ea, #efe4d4);
-    border: 1.5px solid var(--border);
-    padding: 2px;
+    border: 1.5px solid var(--border); padding: 2px;
   }
   .setting-photo-btn {
-    font-size: 12px;
-    padding: 5px 10px;
-    background: #f5ebe0;
-    border: 0;
-    border-radius: 6px;
-    cursor: pointer;
-    color: #6b4423;
-    font-family: inherit;
-    font-weight: 600;
+    font-size: 11px; padding: 4px 8px;
+    background: #f5ebe0; border: 0; border-radius: 6px;
+    cursor: pointer; color: #6b4423; font-family: inherit; font-weight: 600;
   }
   .setting-photo-btn:hover { background: #ead7c1; }
   .setting-fields {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    min-width: 0;
+    flex: 1; display: flex; flex-direction: column;
+    gap: 8px; min-width: 0;
   }
-  .setting-field { display: flex; flex-direction: column; gap: 3px; }
-  .setting-field label { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .setting-field { display: flex; flex-direction: column; gap: 2px; }
+  .setting-field label { font-size: 11px; color: var(--muted); font-weight: 600; }
   .setting-field input {
-    padding: 7px 10px;
-    border: 1.5px solid var(--border);
-    border-radius: 6px;
-    font-size: 14px;
-    font-family: inherit;
-    width: 100%;
+    padding: 6px 8px; border: 1.5px solid var(--border);
+    border-radius: 6px; font-size: 13px; font-family: inherit; width: 100%;
   }
   .setting-field input:focus { outline: none; border-color: var(--primary); }
   .setting-delete-btn {
-    align-self: flex-end;
-    background: transparent;
-    border: 0;
-    color: #c0392b;
-    font-size: 12px;
-    cursor: pointer;
-    padding: 4px 8px;
-    font-family: inherit;
+    align-self: flex-end; background: transparent; border: 0;
+    color: #c0392b; font-size: 11px; cursor: pointer;
+    padding: 3px 6px; font-family: inherit;
   }
   .setting-delete-btn:hover { background: #fde8e6; border-radius: 4px; }
 
   /* footer */
   .site-credit {
-    text-align: center;
-    padding: 32px 16px 8px;
-    font-size: 13px;
-    color: rgba(0, 0, 0, 0.55);
+    text-align: center; padding: 24px 16px 6px;
+    font-size: 12px; color: rgba(0, 0, 0, 0.55);
   }
   .site-credit__author {
-    color: inherit;
-    text-decoration: none;
+    color: inherit; text-decoration: none;
     border-bottom: 1px dotted currentColor;
   }
   .site-credit__author:hover { color: var(--primary); border-bottom-color: var(--primary); }
 
   /* toast */
   .toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
+    position: fixed; bottom: 30px; left: 50%;
     transform: translateX(-50%) translateY(20px);
-    background: #2b2b2b;
-    color: #fff;
-    padding: 10px 22px;
-    border-radius: 999px;
-    font-size: 14px;
-    opacity: 0;
-    pointer-events: none;
-    transition: all .25s;
-    z-index: 999;
+    background: #2b2b2b; color: #fff;
+    padding: 10px 22px; border-radius: 999px;
+    font-size: 14px; opacity: 0; pointer-events: none;
+    transition: all .25s; z-index: 999;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* setup */
   .setup-warning {
-    background: #fff5d9;
-    color: #6e4a00;
-    padding: 18px 22px;
-    border-radius: 12px;
-    margin: 20px;
-    font-size: 14px;
-    border-left: 4px solid var(--gold);
-    line-height: 1.6;
+    background: #fff5d9; color: #6e4a00;
+    padding: 18px 22px; border-radius: 12px;
+    margin: 20px; font-size: 14px;
+    border-left: 4px solid var(--gold); line-height: 1.6;
   }
   .setup-warning code {
-    background: rgba(0,0,0,0.08);
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
-    font-size: 13px;
+    background: rgba(0,0,0,0.08); padding: 1px 6px; border-radius: 4px;
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 13px;
   }
 
   /* responsive */
+  @media (max-height: 800px) {
+    .card { grid-template-rows: 70px 1fr auto; }
+    .card-photo-frame { height: 70px; }
+    .vote-count { font-size: 28px; }
+    .btn-plus { width: 46px; height: 46px; font-size: 24px; }
+    .card-name { font-size: 13px; }
+  }
   @media (max-width: 720px) {
-    .app-header h1 { font-size: 18px; }
-    .summary-info .total { font-size: 26px; }
-    .tab-btn { padding: 8px 14px; font-size: 14px; }
+    .app-header h1 { font-size: 17px; }
+    .summary-info .total { font-size: 22px; }
+    .tab-btn { padding: 6px 12px; font-size: 13px; }
   }
-  @media (max-width: 480px) {
-    .cards { grid-template-columns: 1fr; }
-    .btn-plus { width: 56px; height: 56px; font-size: 32px; }
-    .setting-card { flex-direction: column; align-items: stretch; }
-    .setting-photo-col { flex-direction: row; align-items: center; }
-  }
+
   body.loading-app { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
   body.loading-app::after {
-    content: "⏳ 載入中…";
-    color: var(--muted);
-    font-size: 14px;
+    content: "⏳ 載入中…"; color: var(--muted); font-size: 14px;
   }
 </style>
 </head>
@@ -632,7 +559,8 @@
         <button class="tab-btn active" data-view="count">📊 計票</button>
         <button class="tab-btn" data-view="settings">⚙️ 設定</button>
       </nav>
-      <a class="header-link" href="viewer.html" target="_blank">📺 監票畫面</a>
+      <button class="icon-btn" id="sound-btn" title="切換音效">🔊 音效</button>
+      <a class="header-link" href="viewer.html" target="_blank">📺 監票</a>
       <a class="header-link" href="index.html">🏠 首頁</a>
       <div class="header-info">
         <span class="who" id="who">—</span>
@@ -648,17 +576,19 @@
     </div>
     <div class="summary">
       <div class="summary-info">
-        <span class="label">目前總票數</span>
+        <span class="label">總票數</span>
         <span class="total" id="total-votes">0</span>
         <span class="total-suffix">票</span>
         <span class="live-pill" id="live-pill"><span class="dot"></span> 即時同步</span>
         <span class="label">｜在線觀眾</span>
-        <span class="total" id="watch-presence" style="font-size:20px;">0</span>
+        <span class="total" id="watch-presence" style="font-size:18px;">0</span>
         <span class="total-suffix">處</span>
       </div>
       <div class="summary-actions">
-        <button class="btn btn-ghost" id="export-btn">📋 匯出結果</button>
-        <button class="btn btn-danger" id="reset-btn">🔄 重設票數</button>
+        <button class="btn btn-ghost" id="export-csv-btn" title="匯出 CSV（可開 Excel）">📋 CSV</button>
+        <button class="btn btn-ghost" id="export-txt-btn" title="複製純文字結果">📝 純文字</button>
+        <button class="btn btn-ghost" id="print-btn" title="列印開票報告（可存 PDF）">🖨️ 列印</button>
+        <button class="btn btn-danger" id="reset-btn">🔄 重設</button>
       </div>
     </div>
     <div class="cards" id="cards"></div>
@@ -722,7 +652,7 @@
 <script type="module">
 import {
   firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META
-} from './firebase-config.js?v=1.0.0';
+} from './firebase-config.js?v=1.1.0';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getAuth, signInWithEmailAndPassword, signOut,
@@ -732,8 +662,8 @@ import {
   getDatabase, ref, onValue, set, update, push, remove,
   runTransaction, onDisconnect, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+import { Sound } from './sound.js?v=1.1.0';
 
-// ========= 啟動：根據 config 與 auth 狀態切顯示 =========
 document.body.classList.remove('loading-app');
 
 if (isPlaceholderConfig()) {
@@ -742,12 +672,36 @@ if (isPlaceholderConfig()) {
   bootstrapAuth();
 }
 
+// ===== 音效按鈕（登入前後皆能切換） =====
+function refreshSoundBtn() {
+  const btn = document.getElementById('sound-btn');
+  if (!btn) return;
+  if (Sound.isMuted()) {
+    btn.textContent = '🔇 已靜音';
+    btn.classList.add('muted');
+  } else {
+    btn.textContent = '🔊 音效';
+    btn.classList.remove('muted');
+  }
+}
+// 等 app-section 顯示後再綁
+function bindSoundBtn() {
+  const btn = document.getElementById('sound-btn');
+  if (!btn) return;
+  refreshSoundBtn();
+  btn.onclick = () => {
+    Sound.toggle();
+    Sound.unlock();
+    refreshSoundBtn();
+    if (!Sound.isMuted()) Sound.vote();
+  };
+}
+
 function bootstrapAuth() {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getDatabase(app);
 
-  // setPersistence fire-and-forget（不擋啟動，避免 top-level await 卡住監聽註冊）
   setPersistence(auth, browserLocalPersistence).catch(() => {});
 
   onAuthStateChanged(auth, (user) => {
@@ -756,6 +710,7 @@ function bootstrapAuth() {
       document.getElementById('app-section').style.display = 'block';
       document.getElementById('setup-section').style.display = 'none';
       document.getElementById('who').textContent = user.email || '管理員';
+      bindSoundBtn();
       initAdminApp(db, auth, user);
     } else {
       document.getElementById('login-section').style.display = 'block';
@@ -764,9 +719,9 @@ function bootstrapAuth() {
     }
   });
 
-  // 登入表單
   document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+    Sound.unlock();
     const email = document.getElementById('email').value.trim();
     const pwd = document.getElementById('password').value;
     const btn = document.getElementById('login-btn');
@@ -776,6 +731,7 @@ function bootstrapAuth() {
     btn.textContent = '登入中…';
     try {
       await signInWithEmailAndPassword(auth, email, pwd);
+      Sound.login();
     } catch (e) {
       err.textContent = friendlyAuthError(e);
       err.classList.add('show');
@@ -784,7 +740,6 @@ function bootstrapAuth() {
     }
   });
 
-  // 登出
   document.getElementById('logout-btn').addEventListener('click', async () => {
     if (!confirm('確定要登出嗎？\n（票數資料不會被刪除，下次登入仍可繼續）')) return;
     await signOut(auth);
@@ -797,26 +752,20 @@ function friendlyAuthError(e) {
   if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found')) {
     return '帳號或密碼不正確';
   }
-  if (code.includes('too-many-requests')) {
-    return '登入嘗試太多次，請稍候再試';
-  }
-  if (code.includes('network')) {
-    return '網路連線失敗，請檢查網路';
-  }
-  if (code.includes('user-disabled')) {
-    return '此帳號已被停用';
-  }
+  if (code.includes('too-many-requests')) return '登入嘗試太多次，請稍候再試';
+  if (code.includes('network'))           return '網路連線失敗，請檢查網路';
+  if (code.includes('user-disabled'))     return '此帳號已被停用';
   return '登入失敗：' + (e?.message || code || '未知錯誤');
 }
 
-// ========= 已登入 — 主應用 =========
-let currentActions = [];   // 本地 cache（從 Firebase 同步）
+// ========= 已登入主應用 =========
+let currentActions = [];
 let currentMeta = { ...DEFAULT_META };
-let editingActions = null; // 設定畫面編輯中的副本
+let editingActions = null;
 let prevVotes = {};
 
 function initAdminApp(db, auth, user) {
-  // ===== presence =====
+  // presence
   onValue(ref(db, '.info/connected'), (snap) => {
     if (snap.val() === true) {
       const myRef = push(ref(db, 'dfc/presence'));
@@ -828,25 +777,21 @@ function initAdminApp(db, auth, user) {
     }
   });
 
-  // ===== Tab 切換 =====
+  // tabs
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => switchView(btn.dataset.view));
   });
 
-  // ===== 監聽 actions =====
+  // actions
   onValue(ref(db, 'dfc/actions'), async (snap) => {
     const data = snap.val();
     if (!data || Object.keys(data).length === 0) {
-      // 首次部署 — seed 預設方案
-      console.log('[admin] 首次部署，seed 預設方案到 Firebase');
       const seed = {};
       DEFAULT_ACTIONS.forEach(a => { seed[a.id] = { ...a }; });
       try {
         await set(ref(db, 'dfc/actions'), seed);
         toast('已建立預設 6 個 DFC 方案');
-      } catch (e) {
-        toast('Seed 失敗：' + e.message);
-      }
+      } catch (e) { toast('Seed 失敗：' + e.message); }
       return;
     }
     currentActions = Object.values(data)
@@ -859,11 +804,10 @@ function initAdminApp(db, auth, user) {
     }
   });
 
-  // ===== 監聽 meta =====
+  // meta
   onValue(ref(db, 'dfc/meta'), async (snap) => {
     const data = snap.val();
     if (!data) {
-      // seed 預設 meta
       try { await set(ref(db, 'dfc/meta'), { ...DEFAULT_META }); } catch {}
       return;
     }
@@ -877,7 +821,7 @@ function initAdminApp(db, auth, user) {
     renderCards();
   });
 
-  // ===== 監聽 presence =====
+  // presence count
   onValue(ref(db, 'dfc/presence'), (snap) => {
     const data = snap.val() || {};
     let viewers = 0;
@@ -885,39 +829,87 @@ function initAdminApp(db, auth, user) {
     document.getElementById('watch-presence').textContent = viewers;
   });
 
-  // ===== 按鈕：加票（用 runTransaction 防併發） =====
+  // 加/減票
   document.getElementById('cards').addEventListener('click', async (e) => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
     if (currentMeta.locked) { toast('投票已封存，無法加減票'); return; }
+    Sound.unlock();
     const id = Number(btn.dataset.id);
     const delta = btn.dataset.action === 'inc' ? 1 : -1;
+
+    // 視覺特效（不等寫入完成就先觸發，回饋更即時）
+    if (delta === 1) {
+      // ripple on button
+      addRipple(btn, e);
+      // 浮動 +1
+      const rect = btn.getBoundingClientRect();
+      floatPlus(rect.left + rect.width / 2, rect.top);
+      // 粒子噴發
+      burstParticles(btn);
+      Sound.vote();
+    } else {
+      Sound.unvote();
+    }
+
     try {
       await runTransaction(ref(db, `dfc/actions/${id}/votes`), (cur) => {
         const n = (Number(cur) || 0) + delta;
         return n < 0 ? 0 : n;
       });
-    } catch (e) {
-      toast('寫入失敗：' + e.message);
-    }
+    } catch (e) { toast('寫入失敗：' + e.message); }
   });
 
-  // ===== 重設票數 =====
+  // 重設
   document.getElementById('reset-btn').addEventListener('click', async () => {
     if (!confirm('確定要把所有方案的票數歸零嗎？\n（方案資料不會被刪除）\n\n⚠️ 此動作會即時同步到所有監票畫面，無法復原。')) return;
+    Sound.reset();
     const updates = {};
     currentActions.forEach(a => { updates[`dfc/actions/${a.id}/votes`] = 0; });
     try {
       await update(ref(db), updates);
       toast('票數已重設');
-    } catch (e) {
-      toast('重設失敗：' + e.message);
-    }
+    } catch (e) { toast('重設失敗：' + e.message); }
   });
 
-  // ===== 匯出結果 =====
-  document.getElementById('export-btn').addEventListener('click', () => {
+  // === 匯出：CSV ===
+  document.getElementById('export-csv-btn').addEventListener('click', () => {
     const sorted = [...currentActions].sort((a, b) => (b.votes || 0) - (a.votes || 0) || (a.number || 0) - (b.number || 0));
+    // 計算並列名次
+    const rankOf = new Array(sorted.length).fill(1);
+    for (let i = 1; i < sorted.length; i++) {
+      rankOf[i] = sorted[i].votes === sorted[i - 1].votes ? rankOf[i - 1] : i + 1;
+    }
+    const total = sorted.reduce((s, p) => s + (Number(p.votes) || 0), 0);
+    const headers = ['名次', '選票編號', '班級', '方案名稱', '票數', '得票率(%)'];
+    const rows = sorted.map((p, i) => [
+      rankOf[i],
+      p.number,
+      p.className || '',
+      p.name || '',
+      p.votes || 0,
+      total > 0 ? (((p.votes || 0) / total) * 100).toFixed(2) : '0.00'
+    ]);
+    // BOM (避免 Excel 開啟中文亂碼) + CSV
+    const csv = '﻿' + [headers, ...rows].map(r =>
+      r.map(cell => {
+        const s = String(cell);
+        return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      }).join(',')
+    ).join('\n');
+    const ts = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+    const filename = `DFC開票結果_${ts}.csv`;
+    downloadFile(csv, filename, 'text/csv;charset=utf-8;');
+    toast('✓ 已下載 ' + filename);
+  });
+
+  // === 匯出：純文字 ===
+  document.getElementById('export-txt-btn').addEventListener('click', () => {
+    const sorted = [...currentActions].sort((a, b) => (b.votes || 0) - (a.votes || 0) || (a.number || 0) - (b.number || 0));
+    const rankOf = new Array(sorted.length).fill(1);
+    for (let i = 1; i < sorted.length; i++) {
+      rankOf[i] = sorted[i].votes === sorted[i - 1].votes ? rankOf[i - 1] : i + 1;
+    }
     const lines = [
       currentMeta.title || '龍潭國小 DFC 投票結果',
       currentMeta.subtitle || '',
@@ -926,9 +918,9 @@ function initAdminApp(db, auth, user) {
     ];
     let total = 0;
     sorted.forEach((p, idx) => {
-      const v = Number(p.votes) || 0;
-      total += v;
-      lines.push(`第${idx + 1}名｜${p.number}. ${p.className} ${p.name}：${v} 票`);
+      total += (Number(p.votes) || 0);
+      const tie = idx > 0 && p.votes === sorted[idx - 1].votes ? '（並列）' : '';
+      lines.push(`第${rankOf[idx]}名${tie}｜${p.number}. ${p.className} ${p.name}：${p.votes || 0} 票`);
     });
     lines.push('─'.repeat(40));
     lines.push(`總票數：${total} 票`);
@@ -939,7 +931,12 @@ function initAdminApp(db, auth, user) {
     );
   });
 
-  // ===== 儲存 meta =====
+  // === 列印 ===
+  document.getElementById('print-btn').addEventListener('click', () => {
+    window.print();
+  });
+
+  // settings 寫入
   document.getElementById('save-meta-btn').addEventListener('click', async () => {
     const next = {
       title: document.getElementById('meta-input-title').value.trim() || DEFAULT_META.title,
@@ -947,22 +944,15 @@ function initAdminApp(db, auth, user) {
       schoolName: currentMeta.schoolName || DEFAULT_META.schoolName,
       locked: document.getElementById('meta-input-locked').checked,
     };
-    try {
-      await set(ref(db, 'dfc/meta'), next);
-      toast('活動資訊已儲存');
-    } catch (e) {
-      toast('儲存失敗：' + e.message);
-    }
+    try { await set(ref(db, 'dfc/meta'), next); toast('活動資訊已儲存'); }
+    catch (e) { toast('儲存失敗：' + e.message); }
   });
 
-  // ===== 設定畫面 =====
   document.getElementById('add-action-btn').addEventListener('click', () => {
     if (!editingActions) editingActions = JSON.parse(JSON.stringify(currentActions));
     const maxNum = editingActions.reduce((m, a) => Math.max(m, a.number || 0), 0);
     const nextNum = maxNum + 1;
-    editingActions.push({
-      id: nextNum, number: nextNum, className: '', name: '', photo: '', votes: 0
-    });
+    editingActions.push({ id: nextNum, number: nextNum, className: '', name: '', photo: '', votes: 0 });
     renderSettings();
   });
 
@@ -970,18 +960,12 @@ function initAdminApp(db, auth, user) {
     if (!confirm('確定要把方案重置為預設的 6 個 DFC 方案嗎？\n所有票數會被清成 0。')) return;
     const seed = {};
     DEFAULT_ACTIONS.forEach(a => { seed[a.id] = { ...a }; });
-    try {
-      await set(ref(db, 'dfc/actions'), seed);
-      editingActions = null;
-      toast('已回復預設方案');
-    } catch (e) {
-      toast('回復失敗：' + e.message);
-    }
+    try { await set(ref(db, 'dfc/actions'), seed); editingActions = null; toast('已回復預設方案'); }
+    catch (e) { toast('回復失敗：' + e.message); }
   });
 
   document.getElementById('save-actions-btn').addEventListener('click', async () => {
     if (!editingActions) { toast('沒有變更'); return; }
-    // 驗證 id 唯一
     const ids = new Set();
     for (const a of editingActions) {
       a.id = Number(a.id) || Number(a.number) || 0;
@@ -990,25 +974,18 @@ function initAdminApp(db, auth, user) {
       if (ids.has(a.id)) { toast(`編號 ${a.id} 重複`); return; }
       ids.add(a.id);
     }
-    // 寫整批
     const seed = {};
     editingActions.forEach(a => {
       seed[a.id] = {
-        id: Number(a.id),
-        number: Number(a.number),
+        id: Number(a.id), number: Number(a.number),
         className: (a.className || '').trim(),
         name: (a.name || '').trim(),
         photo: (a.photo || '').trim(),
         votes: Number(a.votes) || 0,
       };
     });
-    try {
-      await set(ref(db, 'dfc/actions'), seed);
-      editingActions = null;
-      toast('方案已儲存');
-    } catch (e) {
-      toast('儲存失敗：' + e.message);
-    }
+    try { await set(ref(db, 'dfc/actions'), seed); editingActions = null; toast('方案已儲存'); }
+    catch (e) { toast('儲存失敗：' + e.message); }
   });
 
   document.getElementById('settings-list').addEventListener('input', (e) => {
@@ -1030,12 +1007,10 @@ function initAdminApp(db, auth, user) {
     if (btn.dataset.action === 'upload-photo') uploadPhoto(idx);
     else if (btn.dataset.action === 'clear-photo') {
       if (!confirm('確定要清除這張照片嗎？')) return;
-      editingActions[idx].photo = '';
-      renderSettings();
+      editingActions[idx].photo = ''; renderSettings();
     } else if (btn.dataset.action === 'delete') {
       if (!confirm(`確定要刪除方案「${editingActions[idx].name || '未命名'}」嗎？\n按下「儲存方案變更」才會真的同步到 Firebase。`)) return;
-      editingActions.splice(idx, 1);
-      renderSettings();
+      editingActions.splice(idx, 1); renderSettings();
     }
   });
 
@@ -1047,12 +1022,11 @@ function initAdminApp(db, auth, user) {
       const file = input.files?.[0];
       if (!file) return;
       if (file.size > 1.5 * 1024 * 1024) {
-        if (!confirm('照片大於 1.5MB，存進 Realtime DB 會超過建議大小（database 單筆字串建議 < 2MB）。\n仍要繼續嗎？')) return;
+        if (!confirm('照片大於 1.5MB，存進 Realtime DB 會超過建議大小。仍要繼續嗎？')) return;
       }
       const reader = new FileReader();
       reader.onload = () => {
-        editingActions[idx].photo = reader.result;
-        renderSettings();
+        editingActions[idx].photo = reader.result; renderSettings();
         toast('照片已更新，記得按「儲存方案變更」');
       };
       reader.readAsDataURL(file);
@@ -1060,7 +1034,7 @@ function initAdminApp(db, auth, user) {
     input.click();
   }
 
-  // ===== 鍵盤快捷鍵 =====
+  // 鍵盤快捷鍵
   document.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
     if (currentMeta.locked) return;
@@ -1069,6 +1043,14 @@ function initAdminApp(db, auth, user) {
     if (n >= 1 && n <= 9) {
       const action = currentActions.find(a => a.number === n);
       if (action) {
+        Sound.unlock(); Sound.vote();
+        // 找到對應卡片觸發視覺
+        const btn = document.querySelector(`button.btn-plus[data-id="${action.id}"]`);
+        if (btn) {
+          const rect = btn.getBoundingClientRect();
+          floatPlus(rect.left + rect.width / 2, rect.top);
+          burstParticles(btn);
+        }
         runTransaction(ref(db, `dfc/actions/${action.id}/votes`), (cur) => (Number(cur) || 0) + 1)
           .catch(err => toast('加票失敗：' + err.message));
         e.preventDefault();
@@ -1099,20 +1081,31 @@ function setLivePill(connected) {
   }
 }
 
-// ===== render =====
 function renderCards() {
   const container = document.getElementById('cards');
   if (!container) return;
+
+  // 計算名次（用於標 leader / tied）
+  const sortedByVotes = [...currentActions]
+    .map(a => ({ id: a.id, votes: Number(a.votes) || 0 }))
+    .sort((a, b) => b.votes - a.votes);
+  const top = sortedByVotes[0]?.votes || 0;
+  const topIds = new Set(sortedByVotes.filter(x => x.votes === top && top > 0).map(x => x.id));
+  const isTieAtTop = topIds.size >= 2;
+
   container.innerHTML = '';
   currentActions.forEach((plan) => {
     const count = Number(plan.votes) || 0;
     const prev = prevVotes[plan.id] || 0;
     const card = document.createElement('div');
-    card.className = 'card';
+    let cardCls = 'card';
+    if (topIds.has(plan.id)) cardCls += isTieAtTop ? ' card-tied' : ' card-leader';
+    card.className = cardCls;
+    card.dataset.id = plan.id;
     card.innerHTML = `
       <div class="card-photo-frame">
         ${plan.photo
-          ? `<img class="card-photo" src="${escapeAttr(plan.photo)}" alt="${escapeAttr(plan.name)}" onerror="this.outerHTML='<div class=\\'card-photo-empty\\'>（找不到照片：${escapeAttr(plan.photo)}）</div>'">`
+          ? `<img class="card-photo" src="${escapeAttr(plan.photo)}" alt="${escapeAttr(plan.name)}" onerror="this.outerHTML='<div class=\\'card-photo-empty\\'>（找不到照片）</div>'">`
           : `<div class="card-photo-empty">（尚未上傳照片）</div>`
         }
       </div>
@@ -1122,15 +1115,15 @@ function renderCards() {
           <span class="card-class">${escapeHtml(plan.className || '')}</span>
         </div>
         <div class="card-name">${escapeHtml(plan.name || '（未命名方案）')}</div>
-        <div class="card-votes">
-          <div class="vote-count-wrap">
-            <span class="vote-count-label">目前票數</span>
-            <span class="vote-count" data-id="${plan.id}">${count}</span>
-          </div>
-          <div class="vote-buttons">
-            <button class="btn-minus" data-action="dec" data-id="${plan.id}" ${count === 0 || currentMeta.locked ? 'disabled' : ''} title="減 1 票（誤點修正）">−</button>
-            <button class="btn-plus" data-action="inc" data-id="${plan.id}" ${currentMeta.locked ? 'disabled' : ''} title="加 1 票">+</button>
-          </div>
+      </div>
+      <div class="card-votes">
+        <div>
+          <div class="vote-count-label">票數</div>
+          <span class="vote-count" data-id="${plan.id}">${count}</span>
+        </div>
+        <div class="vote-buttons">
+          <button class="btn-minus" data-action="dec" data-id="${plan.id}" ${count === 0 || currentMeta.locked ? 'disabled' : ''} title="減 1 票">−</button>
+          <button class="btn-plus" data-action="inc" data-id="${plan.id}" ${currentMeta.locked ? 'disabled' : ''} title="加 1 票">+</button>
         </div>
       </div>
     `;
@@ -1140,10 +1133,12 @@ function renderCards() {
       const el = card.querySelector('.vote-count');
       el.classList.add('bump');
       setTimeout(() => el.classList.remove('bump'), 280);
+      // 整卡光暈
+      card.classList.add('bumping');
+      setTimeout(() => card.classList.remove('bumping'), 700);
     }
     prevVotes[plan.id] = count;
   });
-  // 總票數
   const total = currentActions.reduce((s, p) => s + (Number(p.votes) || 0), 0);
   document.getElementById('total-votes').textContent = total;
 }
@@ -1185,7 +1180,6 @@ function renderSettings() {
       </div>
     `;
     container.appendChild(card);
-    // 隱藏 id 同步 number
     plan.id = plan.number;
   });
 }
@@ -1206,8 +1200,78 @@ function toast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
 }
+
+// ===== 視覺特效 =====
+function addRipple(btn, event) {
+  const rect = btn.getBoundingClientRect();
+  const size = Math.max(rect.width, rect.height);
+  const x = (event.clientX || rect.left + rect.width / 2) - rect.left - size / 2;
+  const y = (event.clientY || rect.top + rect.height / 2) - rect.top - size / 2;
+  const r = document.createElement('span');
+  r.className = 'ripple';
+  r.style.width = r.style.height = size + 'px';
+  r.style.left = x + 'px';
+  r.style.top = y + 'px';
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 600);
+}
+
+function floatPlus(x, y) {
+  const el = document.createElement('div');
+  el.className = 'float-plus';
+  el.textContent = '+1';
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1000);
+}
+
+function burstParticles(hostEl) {
+  const rect = hostEl.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const layer = document.createElement('div');
+  layer.className = 'particles';
+  layer.style.left = cx + 'px';
+  layer.style.top = cy + 'px';
+  document.body.appendChild(layer);
+  const colors = ['#e74c3c', '#c0392b', '#ffe0a0', '#fff', '#ff9f43'];
+  const N = 12;
+  for (let i = 0; i < N; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const angle = (Math.PI * 2 * i) / N + Math.random() * 0.5;
+    const dist = 50 + Math.random() * 40;
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+    p.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+    p.style.animationDelay = (Math.random() * 0.05) + 's';
+    layer.appendChild(p);
+  }
+  setTimeout(() => layer.remove(), 700);
+}
+
+// 沒登入時也能切音效（先初始化按鈕）
+window.addEventListener('DOMContentLoaded', () => setTimeout(bindSoundBtn, 0));
+
+// 列印樣式
+const printStyle = document.createElement('style');
+printStyle.textContent = `
+  @media print {
+    body { background: #fff !important; }
+    .app-header, .tabs, .header-link, .icon-btn, .logout-btn,
+    .header-info, .summary-actions, .lock-banner, .vote-buttons,
+    .toast, .float-plus, .particles, #setup-section,
+    .dfc-update-banner, #dfc-version-tag { display: none !important; }
+    .summary { box-shadow: none; border: 1px solid #ccc; }
+    .card { box-shadow: none !important; border: 1px solid #ccc; break-inside: avoid; }
+    .cards { grid-template-columns: repeat(3, 1fr) !important; }
+    .vote-count { color: #000 !important; }
+  }
+`;
+document.head.appendChild(printStyle);
 </script>
 
-<script defer src="./version-check.js?v=1.0.0"></script>
+<script defer src="./version-check.js?v=1.1.0"></script>
 </body>
 </html>
