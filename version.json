@@ -1,5 +1,5 @@
 {
-  "version": "1.6.1",
-  "released": "2026-05-13T19:33:57+08:00",
-  "notes": "v1.6.1: admin RWD - new max-height 1000 breakpoint for 1080p with browser chrome"
+  "version": "1.6.2",
+  "released": "2026-05-13T19:39:46+08:00",
+  "notes": "v1.6.2: viewer RWD - same max-height 1000 mid-compression as admin"
 }

@@ -7,11 +7,11 @@
 <meta name="description" content="龍潭國小 第 123 屆 自治市小市長選舉 — DFC 行動方案即時監票畫面。本頁僅供觀看，無法進行投票操作。">
 
 <!-- Favicon + PWA -->
-<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.6.1">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.6.1">
-<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.6.1">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.6.1">
-<link rel="manifest" href="./manifest.json?v=1.6.1">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.6.2">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.6.2">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.6.2">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.6.2">
+<link rel="manifest" href="./manifest.json?v=1.6.2">
 <meta name="theme-color" content="#c0392b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,7 +22,7 @@
 <meta property="og:url" content="https://cagoooo.github.io/Lungtan-DFC/viewer.html">
 <meta property="og:title" content="即時監票 — 龍潭國小 第 123 屆 自治市小市長選舉">
 <meta property="og:description" content="DFC 行動方案即時監票畫面 — 全校教室即時連線監看。">
-<meta property="og:image" content="https://cagoooo.github.io/Lungtan-DFC/og-preview.png?v=1.6.1">
+<meta property="og:image" content="https://cagoooo.github.io/Lungtan-DFC/og-preview.png?v=1.6.2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="zh_TW">
@@ -1149,15 +1149,37 @@
     .watch-name { font-size: 17px; }
   }
 
-  /* 矮螢幕（13" 筆電 或 教室電腦 + 工具列）保證一螢幕看完 */
-  @media (max-height: 820px) {
+  /* 中等壓縮：1080p 螢幕但有書籤列 / tabs（可用 viewport ~900-1000px）— 6 卡一螢幕完整看完 */
+  @media (max-height: 1000px) {
     .watch-list { gap: 14px; }
-    .watch-row { grid-template-rows: 110px 1fr auto; }
-    .watch-thumb { height: 110px; }
-    .watch-count-num { font-size: 36px; }
-    .watch-name { font-size: 16px; }
-    .watch-info { padding: 10px 14px 6px; }
-    .watch-count { padding: 10px 14px 12px; gap: 6px; }
+    .watch-row { grid-template-rows: 125px 1fr auto; }
+    .watch-thumb { height: 125px; }
+    .watch-count-num { font-size: 40px; }
+    .watch-name { font-size: 17px; }
+    .watch-info { padding: 12px 16px 8px; }
+    .watch-count { padding: 12px 16px 14px; gap: 8px; }
+    .watch-banner { padding: 18px 24px; margin-bottom: 16px; }
+    .watch-banner-title { font-size: 20px; }
+    .watch-banner-meta strong { font-size: 26px; }
+    .app-header { padding: 10px 0 12px; margin-bottom: 14px; }
+    .app-header .title-block h1 { font-size: 20px; }
+  }
+
+  /* 進階壓縮：13" 筆電 1366×768 / 教室電腦含工具列 — 更緊湊 */
+  @media (max-height: 820px) {
+    .watch-list { gap: 12px; }
+    .watch-row { grid-template-rows: 95px 1fr auto; }
+    .watch-thumb { height: 95px; }
+    .watch-count-num { font-size: 30px; }
+    .watch-name { font-size: 14px; }
+    .watch-info { padding: 8px 12px 4px; }
+    .watch-count { padding: 8px 12px 10px; gap: 4px; }
+    .watch-banner { padding: 12px 18px; margin-bottom: 12px; }
+    .watch-banner-title { font-size: 17px; }
+    .watch-banner-meta strong { font-size: 22px; }
+    .app-header { padding: 6px 0 8px; margin-bottom: 10px; }
+    .app-header .title-block h1 { font-size: 17px; }
+    .watch-notice { padding: 8px 12px; font-size: 11px; margin-top: 12px; }
   }
 
   /* 1100 以下：2 欄 */
@@ -1280,13 +1302,13 @@
 </div>
 
 <script type="module">
-import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.6.1';
+import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.6.2';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getDatabase, ref, onValue, set, push,
   onDisconnect, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-import { Sound } from './sound.js?v=1.6.1';
+import { Sound } from './sound.js?v=1.6.2';
 
 const root = document.getElementById('root');
 
@@ -2068,6 +2090,6 @@ function burstParticles(hostEl, isGold) {
 }
 </script>
 
-<script defer src="./version-check.js?v=1.6.1"></script>
+<script defer src="./version-check.js?v=1.6.2"></script>
 </body>
 </html>
