@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔒 後台計票 — 龍潭國小 DFC 投票系統</title>
+<style>
+  :root {
+    --primary: #c0392b;
+    --primary-dark: #962d22;
+    --accent: #2c5aa0;
+    --gold: #d4a017;
+    --bg: #fff8f2;
+    --card-bg: #ffffff;
+    --text: #2b2b2b;
+    --muted: #777;
+    --border: #e6dccf;
+    --shadow: 0 4px 14px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 28px rgba(0,0,0,0.14);
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  body { min-height: 100vh; }
+  .app {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 16px 20px 60px;
+  }
+
+  /* ===== login ===== */
+  .login-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #c0392b 0%, #962d22 100%);
+  }
+  .login-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 36px 32px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  .login-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+  }
+  .login-card h1 {
+    font-size: 24px;
+    color: var(--primary-dark);
+    margin-bottom: 6px;
+  }
+  .login-card .sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 22px;
+  }
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+  }
+  .login-form label {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: -4px;
+  }
+  .login-form input {
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+  }
+  .login-form input:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  .login-form button {
+    margin-top: 8px;
+    padding: 13px;
+    background: var(--primary);
+    color: #fff;
+    border: 0;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: inherit;
+  }
+  .login-form button:hover { background: var(--primary-dark); }
+  .login-form button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .login-error {
+    background: #fde8e6;
+    color: var(--primary-dark);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 4px;
+    display: none;
+  }
+  .login-error.show { display: block; }
+  .login-back {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 13px;
+  }
+  .login-back a {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px dotted currentColor;
+  }
+  .login-back a:hover { color: var(--primary); border-bottom-color: var(--primary); }
+
+  /* ===== header ===== */
+  .app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 14px 0 16px;
+    border-bottom: 3px solid var(--primary);
+    margin-bottom: 18px;
+  }
+  .app-header h1 {
+    font-size: 22px;
+    color: var(--primary-dark);
+    letter-spacing: 1px;
+  }
+  .app-header h1 small {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: normal;
+    margin-top: 4px;
+    letter-spacing: 0;
+  }
+  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .tabs {
+    display: flex;
+    gap: 6px;
+    background: #fff;
+    padding: 4px;
+    border-radius: 999px;
+    box-shadow: var(--shadow);
+  }
+  .tab-btn {
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .2s;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(192,57,43,0.3);
+  }
+  .tab-btn:hover:not(.active) { background: #f0e6dc; color: var(--text); }
+  .header-info {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .header-info .who { color: var(--text); font-weight: 600; }
+  .logout-btn {
+    border: 0;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--text);
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    box-shadow: var(--shadow);
+    font-size: 13px;
+  }
+  .logout-btn:hover { background: #f5ebe0; }
+  .header-link {
+    text-decoration: none;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 13px;
+    box-shadow: var(--shadow);
+  }
+  .header-link:hover { background: #f5ebe0; }
+
+  /* ===== views ===== */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ===== summary ===== */
+  .summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 14px 22px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .summary-info { display: flex; align-items: baseline; gap: 14px; }
+  .summary-info .label { color: var(--muted); font-size: 14px; }
+  .summary-info .total {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .summary-info .total-suffix { font-size: 14px; color: var(--muted); }
+  .live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: #e8f5ea;
+    color: #2c8a3e;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .live-pill.offline { background: #fde8e6; color: var(--primary-dark); }
+  .live-pill .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #2c8a3e;
+    animation: pulse 1.6s infinite;
+  }
+  .live-pill.offline .dot { background: var(--primary); }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(44,138,62,0.5); }
+    70%  { box-shadow: 0 0 0 6px rgba(44,138,62,0); }
+    100% { box-shadow: 0 0 0 0 rgba(44,138,62,0); }
+  }
+
+  .summary-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    border: 0;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .btn-ghost { background: #f5ebe0; color: #6b4423; }
+  .btn-ghost:hover { background: #ead7c1; }
+  .btn-danger {
+    background: #fff;
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
+  }
+  .btn-danger:hover { background: var(--primary); color: #fff; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); }
+
+  /* ===== cards ===== */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .card:hover { box-shadow: var(--shadow-lg); }
+  .card-photo-frame {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(135deg, #faf3ea, #efe4d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .card-photo {
+    max-width: 100%; max-height: 100%;
+    width: auto; height: auto;
+    object-fit: contain;
+    display: block;
+  }
+  .card-photo-empty {
+    color: var(--muted);
+    font-size: 13px;
+    padding: 16px;
+    text-align: center;
+  }
+  .card-body {
+    padding: 14px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+  .card-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 800;
+    font-size: 18px;
+    box-shadow: 0 2px 6px rgba(192,57,43,0.3);
+  }
+  .card-header-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .card-class { color: var(--accent); font-size: 13px; font-weight: 600; }
+  .card-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+    margin: 2px 0 8px;
+    min-height: 2.8em;
+  }
+  .card-votes {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+  }
+  .vote-count {
+    font-size: 44px;
+    font-weight: 900;
+    color: var(--primary);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+  }
+  .vote-count.bump { transform: scale(1.4); color: var(--accent); }
+  .vote-count-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .vote-count-wrap { display: flex; flex-direction: column; align-items: flex-start; }
+  .vote-buttons { display: flex; gap: 8px; }
+  .btn-plus {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 0;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: #fff;
+    font-size: 36px;
+    font-weight: 300;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(192,57,43,0.4);
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .btn-plus:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(192,57,43,0.5);
+  }
+  .btn-plus:active:not(:disabled) { transform: scale(0.92); }
+  .btn-plus:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-minus {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    color: var(--muted);
+    font-size: 22px;
+    cursor: pointer;
+    transition: all .15s;
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .btn-minus:hover:not(:disabled) { background: #f5ebe0; color: var(--text); }
+  .btn-minus:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* lock banner */
+  .lock-banner {
+    background: #fde8e6;
+    color: var(--primary-dark);
+    border-left: 4px solid var(--primary);
+    padding: 12px 18px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* settings */
+  .settings-section {
+    background: #fff;
+    padding: 18px 22px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 18px;
+  }
+  .settings-section h3 {
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: var(--primary-dark);
+  }
+  .settings-section .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+  .settings-section label { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .settings-section input[type="text"], .settings-section input[type="number"] {
+    padding: 7px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+  }
+  .settings-section input[type="text"] { width: 320px; max-width: 100%; }
+  .settings-section input[type="number"] { width: 72px; }
+  .settings-section .hint {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+
+  .settings-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+  .setting-card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    display: flex;
+    gap: 14px;
+  }
+  .setting-photo-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .setting-photo-preview {
+    width: 120px; height: 80px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: linear-gradient(135deg, #faf3ea, #efe4d4);
+    border: 1.5px solid var(--border);
+    padding: 2px;
+  }
+  .setting-photo-btn {
+    font-size: 12px;
+    padding: 5px 10px;
+    background: #f5ebe0;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #6b4423;
+    font-family: inherit;
+    font-weight: 600;
+  }
+  .setting-photo-btn:hover { background: #ead7c1; }
+  .setting-fields {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+  }
+  .setting-field { display: flex; flex-direction: column; gap: 3px; }
+  .setting-field label { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .setting-field input {
+    padding: 7px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    width: 100%;
+  }
+  .setting-field input:focus { outline: none; border-color: var(--primary); }
+  .setting-delete-btn {
+    align-self: flex-end;
+    background: transparent;
+    border: 0;
+    color: #c0392b;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 4px 8px;
+    font-family: inherit;
+  }
+  .setting-delete-btn:hover { background: #fde8e6; border-radius: 4px; }
+
+  /* footer */
+  .site-credit {
+    text-align: center;
+    padding: 32px 16px 8px;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.55);
+  }
+  .site-credit__author {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dotted currentColor;
+  }
+  .site-credit__author:hover { color: var(--primary); border-bottom-color: var(--primary); }
+
+  /* toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #2b2b2b;
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .25s;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* setup */
+  .setup-warning {
+    background: #fff5d9;
+    color: #6e4a00;
+    padding: 18px 22px;
+    border-radius: 12px;
+    margin: 20px;
+    font-size: 14px;
+    border-left: 4px solid var(--gold);
+    line-height: 1.6;
+  }
+  .setup-warning code {
+    background: rgba(0,0,0,0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    font-size: 13px;
+  }
+
+  /* responsive */
+  @media (max-width: 720px) {
+    .app-header h1 { font-size: 18px; }
+    .summary-info .total { font-size: 26px; }
+    .tab-btn { padding: 8px 14px; font-size: 14px; }
+  }
+  @media (max-width: 480px) {
+    .cards { grid-template-columns: 1fr; }
+    .btn-plus { width: 56px; height: 56px; font-size: 32px; }
+    .setting-card { flex-direction: column; align-items: stretch; }
+    .setting-photo-col { flex-direction: row; align-items: center; }
+  }
+  body.loading-app { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  body.loading-app::after {
+    content: "⏳ 載入中…";
+    color: var(--muted);
+    font-size: 14px;
+  }
+</style>
+</head>
+<body class="loading-app">
+
+<!-- 載入後由 JS 切換顯示哪個 section -->
+<div id="login-section" style="display:none;">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-icon">🔒</div>
+      <h1>後台計票登入</h1>
+      <p class="sub">請輸入 Firebase 管理員帳號</p>
+      <div class="login-error" id="login-error"></div>
+      <form class="login-form" id="login-form">
+        <label for="email">電子郵件</label>
+        <input type="email" id="email" autocomplete="email" required>
+        <label for="password">密碼</label>
+        <input type="password" id="password" autocomplete="current-password" required>
+        <button type="submit" id="login-btn">登入</button>
+      </form>
+      <div class="login-back">
+        <a href="index.html">← 回首頁</a> ｜ <a href="viewer.html">前往監票畫面 →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="app-section" class="app" style="display:none;">
+  <header class="app-header">
+    <h1>
+      📊 後台計票
+      <small id="meta-title">龍潭國小 第 123 屆 自治市小市長選舉</small>
+    </h1>
+    <div class="header-right">
+      <nav class="tabs">
+        <button class="tab-btn active" data-view="count">📊 計票</button>
+        <button class="tab-btn" data-view="settings">⚙️ 設定</button>
+      </nav>
+      <a class="header-link" href="viewer.html" target="_blank">📺 監票畫面</a>
+      <a class="header-link" href="index.html">🏠 首頁</a>
+      <div class="header-info">
+        <span class="who" id="who">—</span>
+        <button class="logout-btn" id="logout-btn">登出</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 計票 -->
+  <main id="view-count" class="view active">
+    <div class="lock-banner" id="lock-banner" style="display:none;">
+      🔒 本次投票已封存（locked），無法再加減票。請到「設定」解鎖。
+    </div>
+    <div class="summary">
+      <div class="summary-info">
+        <span class="label">目前總票數</span>
+        <span class="total" id="total-votes">0</span>
+        <span class="total-suffix">票</span>
+        <span class="live-pill" id="live-pill"><span class="dot"></span> 即時同步</span>
+        <span class="label">｜在線觀眾</span>
+        <span class="total" id="watch-presence" style="font-size:20px;">0</span>
+        <span class="total-suffix">處</span>
+      </div>
+      <div class="summary-actions">
+        <button class="btn btn-ghost" id="export-btn">📋 匯出結果</button>
+        <button class="btn btn-danger" id="reset-btn">🔄 重設票數</button>
+      </div>
+    </div>
+    <div class="cards" id="cards"></div>
+  </main>
+
+  <!-- 設定 -->
+  <main id="view-settings" class="view">
+    <div class="settings-section">
+      <h3>📝 活動資訊</h3>
+      <div class="row">
+        <label>標題</label>
+        <input type="text" id="meta-input-title" placeholder="龍潭國小 第 123 屆 自治市小市長選舉">
+      </div>
+      <div class="row">
+        <label>副標</label>
+        <input type="text" id="meta-input-subtitle" placeholder="DFC 行動方案 · 投票實況">
+      </div>
+      <div class="row">
+        <label>
+          <input type="checkbox" id="meta-input-locked"> 封存本次投票（locked）
+        </label>
+      </div>
+      <button class="btn btn-primary" id="save-meta-btn">💾 儲存活動資訊</button>
+    </div>
+
+    <div class="settings-section">
+      <h3>🗂️ 方案管理</h3>
+      <div class="row">
+        <button class="btn btn-ghost" id="add-action-btn">➕ 新增一個方案</button>
+        <button class="btn btn-ghost" id="restore-defaults-btn">↩️ 回復預設 6 個 DFC 方案</button>
+        <span style="flex:1"></span>
+        <button class="btn btn-primary" id="save-actions-btn">💾 儲存方案變更</button>
+      </div>
+      <p class="hint">
+        修改方案資料後請按「儲存方案變更」才會同步到 Firebase。<br>
+        票數修改請到「計票」分頁的 + / − 按鈕（避免設定畫面誤改票數）。
+      </p>
+    </div>
+
+    <div class="settings-list" id="settings-list"></div>
+  </main>
+
+  <footer class="site-credit">
+    Made with <span>❤️</span> by
+    <a href="https://www.smes.tyc.edu.tw/modules/tadnews/page.php?ncsn=11&nsn=16#a5"
+       target="_blank" rel="noopener noreferrer" class="site-credit__author">阿凱老師</a>
+  </footer>
+</div>
+
+<div id="setup-section" style="display:none;">
+  <div class="setup-warning">
+    ⚠️ <strong>Firebase 尚未設定。</strong><br>
+    請打開 <code>firebase-config.js</code>，把 <code>REPLACE_WITH_YOUR_API_KEY</code> 等佔位字串換成你的 Firebase 專案設定。
+    詳細部署步驟請看 <code>README.md</code>。<br><br>
+    <a href="index.html">← 回首頁</a>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import {
+  firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META
+} from './firebase-config.js';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getAuth, signInWithEmailAndPassword, signOut,
+  onAuthStateChanged, setPersistence, browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import {
+  getDatabase, ref, onValue, set, update, push, remove,
+  runTransaction, onDisconnect, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+// ========= 啟動：根據 config 與 auth 狀態切顯示 =========
+document.body.classList.remove('loading-app');
+
+if (isPlaceholderConfig()) {
+  document.getElementById('setup-section').style.display = 'block';
+} else {
+  bootstrapAuth();
+}
+
+function bootstrapAuth() {
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  // setPersistence fire-and-forget（不擋啟動，避免 top-level await 卡住監聽註冊）
+  setPersistence(auth, browserLocalPersistence).catch(() => {});
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('app-section').style.display = 'block';
+      document.getElementById('setup-section').style.display = 'none';
+      document.getElementById('who').textContent = user.email || '管理員';
+      initAdminApp(db, auth, user);
+    } else {
+      document.getElementById('login-section').style.display = 'block';
+      document.getElementById('app-section').style.display = 'none';
+      setTimeout(() => document.getElementById('email')?.focus(), 100);
+    }
+  });
+
+  // 登入表單
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const pwd = document.getElementById('password').value;
+    const btn = document.getElementById('login-btn');
+    const err = document.getElementById('login-error');
+    err.classList.remove('show');
+    btn.disabled = true;
+    btn.textContent = '登入中…';
+    try {
+      await signInWithEmailAndPassword(auth, email, pwd);
+    } catch (e) {
+      err.textContent = friendlyAuthError(e);
+      err.classList.add('show');
+      btn.disabled = false;
+      btn.textContent = '登入';
+    }
+  });
+
+  // 登出
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    if (!confirm('確定要登出嗎？\n（票數資料不會被刪除，下次登入仍可繼續）')) return;
+    await signOut(auth);
+    toast('已登出');
+  });
+}
+
+function friendlyAuthError(e) {
+  const code = e?.code || '';
+  if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found')) {
+    return '帳號或密碼不正確';
+  }
+  if (code.includes('too-many-requests')) {
+    return '登入嘗試太多次，請稍候再試';
+  }
+  if (code.includes('network')) {
+    return '網路連線失敗，請檢查網路';
+  }
+  if (code.includes('user-disabled')) {
+    return '此帳號已被停用';
+  }
+  return '登入失敗：' + (e?.message || code || '未知錯誤');
+}
+
+// ========= 已登入 — 主應用 =========
+let currentActions = [];   // 本地 cache（從 Firebase 同步）
+let currentMeta = { ...DEFAULT_META };
+let editingActions = null; // 設定畫面編輯中的副本
+let prevVotes = {};
+
+function initAdminApp(db, auth, user) {
+  // ===== presence =====
+  onValue(ref(db, '.info/connected'), (snap) => {
+    if (snap.val() === true) {
+      const myRef = push(ref(db, 'dfc/presence'));
+      onDisconnect(myRef).remove();
+      set(myRef, { ts: serverTimestamp(), role: 'admin' });
+      setLivePill(true);
+    } else {
+      setLivePill(false);
+    }
+  });
+
+  // ===== Tab 切換 =====
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => switchView(btn.dataset.view));
+  });
+
+  // ===== 監聽 actions =====
+  onValue(ref(db, 'dfc/actions'), async (snap) => {
+    const data = snap.val();
+    if (!data || Object.keys(data).length === 0) {
+      // 首次部署 — seed 預設方案
+      console.log('[admin] 首次部署，seed 預設方案到 Firebase');
+      const seed = {};
+      DEFAULT_ACTIONS.forEach(a => { seed[a.id] = { ...a }; });
+      try {
+        await set(ref(db, 'dfc/actions'), seed);
+        toast('已建立預設 6 個 DFC 方案');
+      } catch (e) {
+        toast('Seed 失敗：' + e.message);
+      }
+      return;
+    }
+    currentActions = Object.values(data)
+      .filter(a => a && typeof a === 'object')
+      .sort((a, b) => (a.number || 0) - (b.number || 0));
+    renderCards();
+    if (document.getElementById('view-settings').classList.contains('active') && !editingActions) {
+      editingActions = JSON.parse(JSON.stringify(currentActions));
+      renderSettings();
+    }
+  });
+
+  // ===== 監聽 meta =====
+  onValue(ref(db, 'dfc/meta'), async (snap) => {
+    const data = snap.val();
+    if (!data) {
+      // seed 預設 meta
+      try { await set(ref(db, 'dfc/meta'), { ...DEFAULT_META }); } catch {}
+      return;
+    }
+    currentMeta = { ...DEFAULT_META, ...data };
+    document.getElementById('meta-title').textContent = currentMeta.title || '';
+    document.title = '🔒 後台計票 — ' + (currentMeta.title || 'DFC 投票系統');
+    document.getElementById('meta-input-title').value = currentMeta.title || '';
+    document.getElementById('meta-input-subtitle').value = currentMeta.subtitle || '';
+    document.getElementById('meta-input-locked').checked = !!currentMeta.locked;
+    document.getElementById('lock-banner').style.display = currentMeta.locked ? 'block' : 'none';
+    renderCards();
+  });
+
+  // ===== 監聽 presence =====
+  onValue(ref(db, 'dfc/presence'), (snap) => {
+    const data = snap.val() || {};
+    let viewers = 0;
+    Object.values(data).forEach(p => { if (p?.role === 'viewer') viewers++; });
+    document.getElementById('watch-presence').textContent = viewers;
+  });
+
+  // ===== 按鈕：加票（用 runTransaction 防併發） =====
+  document.getElementById('cards').addEventListener('click', async (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    if (currentMeta.locked) { toast('投票已封存，無法加減票'); return; }
+    const id = Number(btn.dataset.id);
+    const delta = btn.dataset.action === 'inc' ? 1 : -1;
+    try {
+      await runTransaction(ref(db, `dfc/actions/${id}/votes`), (cur) => {
+        const n = (Number(cur) || 0) + delta;
+        return n < 0 ? 0 : n;
+      });
+    } catch (e) {
+      toast('寫入失敗：' + e.message);
+    }
+  });
+
+  // ===== 重設票數 =====
+  document.getElementById('reset-btn').addEventListener('click', async () => {
+    if (!confirm('確定要把所有方案的票數歸零嗎？\n（方案資料不會被刪除）\n\n⚠️ 此動作會即時同步到所有監票畫面，無法復原。')) return;
+    const updates = {};
+    currentActions.forEach(a => { updates[`dfc/actions/${a.id}/votes`] = 0; });
+    try {
+      await update(ref(db), updates);
+      toast('票數已重設');
+    } catch (e) {
+      toast('重設失敗：' + e.message);
+    }
+  });
+
+  // ===== 匯出結果 =====
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const sorted = [...currentActions].sort((a, b) => (b.votes || 0) - (a.votes || 0) || (a.number || 0) - (b.number || 0));
+    const lines = [
+      currentMeta.title || '龍潭國小 DFC 投票結果',
+      currentMeta.subtitle || '',
+      '時間：' + new Date().toLocaleString('zh-TW'),
+      '─'.repeat(40),
+    ];
+    let total = 0;
+    sorted.forEach((p, idx) => {
+      const v = Number(p.votes) || 0;
+      total += v;
+      lines.push(`第${idx + 1}名｜${p.number}. ${p.className} ${p.name}：${v} 票`);
+    });
+    lines.push('─'.repeat(40));
+    lines.push(`總票數：${total} 票`);
+    const text = lines.join('\n');
+    navigator.clipboard?.writeText(text).then(
+      () => toast('結果已複製到剪貼簿'),
+      () => alert(text)
+    );
+  });
+
+  // ===== 儲存 meta =====
+  document.getElementById('save-meta-btn').addEventListener('click', async () => {
+    const next = {
+      title: document.getElementById('meta-input-title').value.trim() || DEFAULT_META.title,
+      subtitle: document.getElementById('meta-input-subtitle').value.trim() || DEFAULT_META.subtitle,
+      schoolName: currentMeta.schoolName || DEFAULT_META.schoolName,
+      locked: document.getElementById('meta-input-locked').checked,
+    };
+    try {
+      await set(ref(db, 'dfc/meta'), next);
+      toast('活動資訊已儲存');
+    } catch (e) {
+      toast('儲存失敗：' + e.message);
+    }
+  });
+
+  // ===== 設定畫面 =====
+  document.getElementById('add-action-btn').addEventListener('click', () => {
+    if (!editingActions) editingActions = JSON.parse(JSON.stringify(currentActions));
+    const maxNum = editingActions.reduce((m, a) => Math.max(m, a.number || 0), 0);
+    const nextNum = maxNum + 1;
+    editingActions.push({
+      id: nextNum, number: nextNum, className: '', name: '', photo: '', votes: 0
+    });
+    renderSettings();
+  });
+
+  document.getElementById('restore-defaults-btn').addEventListener('click', async () => {
+    if (!confirm('確定要把方案重置為預設的 6 個 DFC 方案嗎？\n所有票數會被清成 0。')) return;
+    const seed = {};
+    DEFAULT_ACTIONS.forEach(a => { seed[a.id] = { ...a }; });
+    try {
+      await set(ref(db, 'dfc/actions'), seed);
+      editingActions = null;
+      toast('已回復預設方案');
+    } catch (e) {
+      toast('回復失敗：' + e.message);
+    }
+  });
+
+  document.getElementById('save-actions-btn').addEventListener('click', async () => {
+    if (!editingActions) { toast('沒有變更'); return; }
+    // 驗證 id 唯一
+    const ids = new Set();
+    for (const a of editingActions) {
+      a.id = Number(a.id) || Number(a.number) || 0;
+      a.number = Number(a.number) || a.id;
+      if (!a.id) { toast('編號不可為空'); return; }
+      if (ids.has(a.id)) { toast(`編號 ${a.id} 重複`); return; }
+      ids.add(a.id);
+    }
+    // 寫整批
+    const seed = {};
+    editingActions.forEach(a => {
+      seed[a.id] = {
+        id: Number(a.id),
+        number: Number(a.number),
+        className: (a.className || '').trim(),
+        name: (a.name || '').trim(),
+        photo: (a.photo || '').trim(),
+        votes: Number(a.votes) || 0,
+      };
+    });
+    try {
+      await set(ref(db, 'dfc/actions'), seed);
+      editingActions = null;
+      toast('方案已儲存');
+    } catch (e) {
+      toast('儲存失敗：' + e.message);
+    }
+  });
+
+  document.getElementById('settings-list').addEventListener('input', (e) => {
+    const input = e.target;
+    if (!input.dataset.idx) return;
+    if (!editingActions) editingActions = JSON.parse(JSON.stringify(currentActions));
+    const idx = Number(input.dataset.idx);
+    const field = input.dataset.field;
+    let value = input.value;
+    if (field === 'number' || field === 'id') value = Number(value) || 0;
+    editingActions[idx][field] = value;
+  });
+
+  document.getElementById('settings-list').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const idx = Number(btn.dataset.idx);
+    if (!editingActions) editingActions = JSON.parse(JSON.stringify(currentActions));
+    if (btn.dataset.action === 'upload-photo') uploadPhoto(idx);
+    else if (btn.dataset.action === 'clear-photo') {
+      if (!confirm('確定要清除這張照片嗎？')) return;
+      editingActions[idx].photo = '';
+      renderSettings();
+    } else if (btn.dataset.action === 'delete') {
+      if (!confirm(`確定要刪除方案「${editingActions[idx].name || '未命名'}」嗎？\n按下「儲存方案變更」才會真的同步到 Firebase。`)) return;
+      editingActions.splice(idx, 1);
+      renderSettings();
+    }
+  });
+
+  function uploadPhoto(idx) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.addEventListener('change', () => {
+      const file = input.files?.[0];
+      if (!file) return;
+      if (file.size > 1.5 * 1024 * 1024) {
+        if (!confirm('照片大於 1.5MB，存進 Realtime DB 會超過建議大小（database 單筆字串建議 < 2MB）。\n仍要繼續嗎？')) return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        editingActions[idx].photo = reader.result;
+        renderSettings();
+        toast('照片已更新，記得按「儲存方案變更」');
+      };
+      reader.readAsDataURL(file);
+    });
+    input.click();
+  }
+
+  // ===== 鍵盤快捷鍵 =====
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (currentMeta.locked) return;
+    if (!document.getElementById('view-count').classList.contains('active')) return;
+    const n = Number(e.key);
+    if (n >= 1 && n <= 9) {
+      const action = currentActions.find(a => a.number === n);
+      if (action) {
+        runTransaction(ref(db, `dfc/actions/${action.id}/votes`), (cur) => (Number(cur) || 0) + 1)
+          .catch(err => toast('加票失敗：' + err.message));
+        e.preventDefault();
+      }
+    }
+  });
+}
+
+function switchView(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.view === name));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  if (name === 'settings') {
+    if (!editingActions) editingActions = JSON.parse(JSON.stringify(currentActions));
+    renderSettings();
+  }
+}
+
+function setLivePill(connected) {
+  const pill = document.getElementById('live-pill');
+  if (!pill) return;
+  if (connected) {
+    pill.classList.remove('offline');
+    pill.innerHTML = '<span class="dot"></span> 即時同步';
+  } else {
+    pill.classList.add('offline');
+    pill.innerHTML = '<span class="dot"></span> 連線中斷';
+  }
+}
+
+// ===== render =====
+function renderCards() {
+  const container = document.getElementById('cards');
+  if (!container) return;
+  container.innerHTML = '';
+  currentActions.forEach((plan) => {
+    const count = Number(plan.votes) || 0;
+    const prev = prevVotes[plan.id] || 0;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-photo-frame">
+        ${plan.photo
+          ? `<img class="card-photo" src="${escapeAttr(plan.photo)}" alt="${escapeAttr(plan.name)}" onerror="this.outerHTML='<div class=\\'card-photo-empty\\'>（找不到照片：${escapeAttr(plan.photo)}）</div>'">`
+          : `<div class="card-photo-empty">（尚未上傳照片）</div>`
+        }
+      </div>
+      <div class="card-body">
+        <div class="card-header-row">
+          <span class="card-number">${plan.number}</span>
+          <span class="card-class">${escapeHtml(plan.className || '')}</span>
+        </div>
+        <div class="card-name">${escapeHtml(plan.name || '（未命名方案）')}</div>
+        <div class="card-votes">
+          <div class="vote-count-wrap">
+            <span class="vote-count-label">目前票數</span>
+            <span class="vote-count" data-id="${plan.id}">${count}</span>
+          </div>
+          <div class="vote-buttons">
+            <button class="btn-minus" data-action="dec" data-id="${plan.id}" ${count === 0 || currentMeta.locked ? 'disabled' : ''} title="減 1 票（誤點修正）">−</button>
+            <button class="btn-plus" data-action="inc" data-id="${plan.id}" ${currentMeta.locked ? 'disabled' : ''} title="加 1 票">+</button>
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+
+    if (count > prev) {
+      const el = card.querySelector('.vote-count');
+      el.classList.add('bump');
+      setTimeout(() => el.classList.remove('bump'), 280);
+    }
+    prevVotes[plan.id] = count;
+  });
+  // 總票數
+  const total = currentActions.reduce((s, p) => s + (Number(p.votes) || 0), 0);
+  document.getElementById('total-votes').textContent = total;
+}
+
+function renderSettings() {
+  const container = document.getElementById('settings-list');
+  if (!container || !editingActions) return;
+  container.innerHTML = '';
+  editingActions.forEach((plan, idx) => {
+    const card = document.createElement('div');
+    card.className = 'setting-card';
+    card.innerHTML = `
+      <div class="setting-photo-col">
+        ${plan.photo
+          ? `<img class="setting-photo-preview" src="${escapeAttr(plan.photo)}" alt="預覽" onerror="this.style.display='none'">`
+          : `<div class="setting-photo-preview" style="display:flex;align-items:center;justify-content:center;color:#aaa;font-size:11px;">無照片</div>`
+        }
+        <button class="setting-photo-btn" data-idx="${idx}" data-action="upload-photo">更換照片</button>
+        <button class="setting-photo-btn" data-idx="${idx}" data-action="clear-photo" style="background:#fbe9e7;color:#a33;">清除照片</button>
+      </div>
+      <div class="setting-fields">
+        <div class="setting-field">
+          <label>選票編號 (id 也用此值)</label>
+          <input type="number" min="1" data-idx="${idx}" data-field="number" value="${plan.number}">
+        </div>
+        <div class="setting-field">
+          <label>班級 / 標籤</label>
+          <input type="text" data-idx="${idx}" data-field="className" value="${escapeAttr(plan.className || '')}" placeholder="例：五年一班">
+        </div>
+        <div class="setting-field">
+          <label>方案名稱</label>
+          <input type="text" data-idx="${idx}" data-field="name" value="${escapeAttr(plan.name || '')}" placeholder="例：保健室小志工">
+        </div>
+        <div class="setting-field">
+          <label>照片檔名 / 路徑（或上傳照片）</label>
+          <input type="text" data-idx="${idx}" data-field="photo" value="${escapeAttr((plan.photo || '').slice(0, 200))}" placeholder="例：501.jpg">
+        </div>
+        <button class="setting-delete-btn" data-idx="${idx}" data-action="delete">🗑️ 移除此方案</button>
+      </div>
+    `;
+    container.appendChild(card);
+    // 隱藏 id 同步 number
+    plan.id = plan.number;
+  });
+}
+
+// ===== util =====
+function escapeHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+let toastTimer = null;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
+}
+</script>
+</body>
+</html>

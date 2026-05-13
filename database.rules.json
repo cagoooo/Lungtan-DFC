@@ -1,0 +1,34 @@
+{
+  "rules": {
+    "dfc": {
+      ".read": true,
+      ".write": "auth != null",
+      "actions": {
+        "$id": {
+          "votes":     { ".validate": "newData.isNumber() && newData.val() >= 0" },
+          "number":    { ".validate": "newData.isNumber()" },
+          "id":        { ".validate": "newData.isNumber()" },
+          "name":      { ".validate": "newData.isString() && newData.val().length <= 60" },
+          "className": { ".validate": "newData.isString() && newData.val().length <= 30" },
+          "photo":     { ".validate": "newData.isString() && newData.val().length <= 2000000" }
+        }
+      },
+      "meta": {
+        "title":      { ".validate": "newData.isString() && newData.val().length <= 100" },
+        "subtitle":   { ".validate": "newData.isString() && newData.val().length <= 100" },
+        "schoolName": { ".validate": "newData.isString() && newData.val().length <= 50" },
+        "locked":     { ".validate": "newData.isBoolean()" }
+      },
+      "log": {
+        ".indexOn": ["ts"]
+      },
+      "presence": {
+        ".read": true,
+        "$sid": {
+          ".write": true,
+          ".validate": "newData.hasChild('ts')"
+        }
+      }
+    }
+  }
+}

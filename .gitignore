@@ -1,0 +1,31 @@
+# Firebase
+.firebase/
+.firebaserc
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log
+database-debug.log
+ui-debug.log
+.runtimeconfig.json
+firebase-export-*/
+
+# 編輯器 / 系統
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Node（如未來引入工具用）
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# 本地 cache / temp
+*.log
+*.tmp
+.cache/
+
+# 不要把使用者本機自製 firebase-config 覆蓋進 repo（保留 placeholder）
+# firebase-config.js  ← 如要保護 production config 才打開
