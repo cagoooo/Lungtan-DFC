@@ -6,11 +6,11 @@
 <title>🔒 後台計票 — 龍潭國小 DFC 投票系統</title>
 
 <!-- Favicon + PWA -->
-<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.4.5">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.4.5">
-<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.4.5">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.4.5">
-<link rel="manifest" href="./manifest.json?v=1.4.5">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.4.6">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.4.6">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.4.6">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.4.6">
+<link rel="manifest" href="./manifest.json?v=1.4.6">
 <meta name="theme-color" content="#c0392b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -202,6 +202,28 @@
   .btn-danger:hover { background: var(--primary); color: #fff; }
   .btn-primary { background: var(--primary); color: #fff; }
   .btn-primary:hover { background: var(--primary-dark); }
+  /* 結束開票按鈕（金色突顯，呼應儀式畫面金色主題） */
+  .btn-finale {
+    background: linear-gradient(135deg, #f0b400, #d4a017);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(212,160,23,0.4);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .btn-finale:hover {
+    box-shadow: 0 5px 14px rgba(212,160,23,0.6);
+    transform: translateY(-1px);
+  }
+  .btn-finale.is-locked {
+    background: #fff;
+    color: var(--gold);
+    border: 1.5px solid var(--gold);
+    box-shadow: 0 2px 6px rgba(212,160,23,0.2);
+  }
+  .btn-finale.is-locked:hover {
+    background: var(--gold);
+    color: #fff;
+  }
 
   /* ===== cards grid（一螢幕看完 6 個，大電腦下更氣派）===== */
   .cards {
@@ -714,6 +736,7 @@
         <span class="total-suffix">處</span>
       </div>
       <div class="summary-actions">
+        <button class="btn btn-finale" id="finale-btn" title="一鍵結束開票，所有監票畫面進入儀式畫面">🎉 結束開票</button>
         <button class="btn btn-ghost" id="export-csv-btn" title="匯出 CSV（可開 Excel）">📋 CSV</button>
         <button class="btn btn-ghost" id="export-txt-btn" title="複製純文字結果">📝 純文字</button>
         <button class="btn btn-ghost" id="print-btn" title="列印開票報告（可存 PDF）">🖨️ 列印</button>
@@ -796,7 +819,7 @@
 <script type="module">
 import {
   firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META
-} from './firebase-config.js?v=1.4.5';
+} from './firebase-config.js?v=1.4.6';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getAuth, signInWithEmailAndPassword, signOut,
@@ -807,7 +830,7 @@ import {
   runTransaction, onDisconnect, serverTimestamp,
   query, limitToLast, orderByChild
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-import { Sound } from './sound.js?v=1.4.5';
+import { Sound } from './sound.js?v=1.4.6';
 
 document.body.classList.remove('loading-app');
 
@@ -964,7 +987,43 @@ function initAdminApp(db, auth, user) {
     document.getElementById('meta-input-subtitle').value = currentMeta.subtitle || '';
     document.getElementById('meta-input-locked').checked = !!currentMeta.locked;
     document.getElementById('lock-banner').style.display = currentMeta.locked ? 'block' : 'none';
+    refreshFinaleBtn();
     renderCards();
+  });
+
+  // ===== 一鍵結束開票 / 解除封存 =====
+  function refreshFinaleBtn() {
+    const btn = document.getElementById('finale-btn');
+    if (!btn) return;
+    if (currentMeta.locked) {
+      btn.textContent = '🔓 解除封存';
+      btn.title = '回到一般監看畫面，可繼續加減票';
+      btn.classList.add('is-locked');
+    } else {
+      btn.textContent = '🎉 結束開票';
+      btn.title = '一鍵進入儀式畫面（所有監票畫面同步切換 + 撒彩帶）';
+      btn.classList.remove('is-locked');
+    }
+  }
+  document.getElementById('finale-btn').addEventListener('click', async () => {
+    const next = !currentMeta.locked;
+    const msg = next
+      ? '🎉 確定要「結束開票」嗎？\n\n所有監票畫面會立刻切到「開票結果儀式畫面」：\n• 全螢幕黑紅漸層 + 大字「✨ 開票結果 ✨」\n• 顯示當選者大照片 + 持續撒彩帶\n• 加減票按鈕暫停作用\n\n之後可隨時點本按鈕「🔓 解除封存」回到一般監看。'
+      : '確定要「解除封存」嗎？\n\n所有監票畫面會退出儀式畫面回到一般即時監看，加減票按鈕重新可用。';
+    if (!confirm(msg)) return;
+    try {
+      await set(ref(db, 'dfc/meta/locked'), next);
+      Sound.unlock();
+      if (next) {
+        Sound.leaderChange(); // fanfare 配合儀式登場
+        toast('🎉 已結束開票，儀式畫面已在所有教室啟動');
+      } else {
+        Sound.update();
+        toast('已解除封存，回到一般監看');
+      }
+    } catch (e) {
+      toast('切換失敗：' + e.message);
+    }
   });
 
   // presence count
@@ -1545,6 +1604,6 @@ printStyle.textContent = `
 document.head.appendChild(printStyle);
 </script>
 
-<script defer src="./version-check.js?v=1.4.5"></script>
+<script defer src="./version-check.js?v=1.4.6"></script>
 </body>
 </html>

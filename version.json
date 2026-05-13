@@ -1,5 +1,5 @@
 {
-  "version": "1.4.5",
-  "released": "2026-05-13T13:53:04+08:00",
-  "notes": "v1.4.5: fullscreen scroll fix + adaptive compression for small screens"
+  "version": "1.4.6",
+  "released": "2026-05-13T13:59:24+08:00",
+  "notes": "v1.4.6: admin one-click finale button toggle locked state directly from count tab"
 }

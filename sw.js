@@ -4,7 +4,7 @@
 //   - JS / CSS / 照片：cache-first（含版本字串自然失效，速度快）
 //   - Firebase RTDB / Google APIs / 第三方 CDN：直通網路（不攔不快取，保住即時連線）
 
-const VERSION = 'v1.4.5';                    // ← 部署時由 bump-version.ps1 自動更新
+const VERSION = 'v1.4.6';                    // ← 部署時由 bump-version.ps1 自動更新
 const STATIC_CACHE = `lungtan-dfc-static-${VERSION}`;
 const HTML_CACHE   = `lungtan-dfc-html-${VERSION}`;
 
