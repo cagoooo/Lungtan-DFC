@@ -29,10 +29,10 @@ export const firebaseConfig = {
 export const DEFAULT_ACTIONS = [
   { id: 1, number: 1, className: "五年一班", name: "保健室小志工",           photo: "501.jpg", votes: 0 },
   { id: 2, number: 2, className: "五年二班", name: "失物招領瘦身操",         photo: "502.jpg", votes: 0 },
-  { id: 3, number: 3, className: "503 班",   name: "遊樂器材區糾察隊",       photo: "503.jpg", votes: 0 },
+  { id: 3, number: 3, className: "五年三班", name: "遊樂器材區糾察隊",       photo: "503.jpg", votes: 0 },
   { id: 4, number: 4, className: "五年四班", name: "校園除「絲」機",         photo: "504.jpg", votes: 0 },
-  { id: 5, number: 5, className: "505 班",   name: "名牌看得到，正義一定到", photo: "505.jpg", votes: 0 },
-  { id: 6, number: 6, className: "506 班",   name: "玻璃磚轉角的活化基地",   photo: "506.jpg", votes: 0 },
+  { id: 5, number: 5, className: "五年五班", name: "名牌看得到，正義一定到", photo: "505.jpg", votes: 0 },
+  { id: 6, number: 6, className: "五年六班", name: "玻璃磚轉角的活化基地",   photo: "506.jpg", votes: 0 },
 ];
 
 export const DEFAULT_META = {
