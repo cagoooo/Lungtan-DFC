@@ -1,5 +1,5 @@
 {
-  "version": "1.4.0",
-  "released": "2026-05-13T13:11:36+08:00",
-  "notes": "v1.4.0: viewer 3-column card grid layout (matches admin) + full RWD breakpoints + medal rank badges"
+  "version": "1.4.1",
+  "released": "2026-05-13T13:16:48+08:00",
+  "notes": "v1.4.1: fix all-zero rank badge - show waiting state instead of medal badges"
 }
