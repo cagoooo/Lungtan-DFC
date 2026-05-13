@@ -6,11 +6,11 @@
 <title>🔒 後台計票 — 龍潭國小 DFC 投票系統</title>
 
 <!-- Favicon + PWA -->
-<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.6.2">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.6.2">
-<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.6.2">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.6.2">
-<link rel="manifest" href="./manifest.json?v=1.6.2">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.7.0">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.7.0">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.7.0">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.7.0">
+<link rel="manifest" href="./manifest.json?v=1.7.0">
 <meta name="theme-color" content="#c0392b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -141,6 +141,99 @@
   }
   .header-link:hover, .icon-btn:hover { background: #f5ebe0; }
   .icon-btn.muted { background: #f5ebe0; color: var(--muted); text-decoration: line-through; }
+  /* 音效 popover slider */
+  .sound-wrap { position: relative; display: inline-block; }
+  .sound-popover {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 50;
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+    border: 1px solid var(--border);
+    min-width: 220px;
+    display: none;
+    animation: pop-fade-in .15s ease-out;
+  }
+  .sound-popover.show { display: block; }
+  @keyframes pop-fade-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .sound-popover::before {
+    content: '';
+    position: absolute;
+    top: -6px; right: 30px;
+    width: 12px; height: 12px;
+    background: #fff;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    transform: rotate(45deg);
+  }
+  .sound-pop-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .sound-pop-label span {
+    color: var(--primary);
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+  }
+  .sound-pop-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    text-align: center;
+  }
+  #sound-vol-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    margin: 4px 0;
+  }
+  #sound-vol-slider::-webkit-slider-runnable-track {
+    height: 6px;
+    background: #e6dccf;
+    border-radius: 999px;
+  }
+  #sound-vol-slider::-moz-range-track {
+    height: 6px;
+    background: #e6dccf;
+    border-radius: 999px;
+  }
+  #sound-vol-slider::-moz-range-progress {
+    height: 6px;
+    background: var(--primary);
+    border-radius: 999px;
+  }
+  #sound-vol-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(192,57,43,0.4);
+    margin-top: -6px;
+    transition: transform .15s;
+  }
+  #sound-vol-slider::-moz-range-thumb {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--primary);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(192,57,43,0.4);
+  }
+  #sound-vol-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
   .header-info {
     font-size: 13px; color: var(--muted);
     display: flex; flex-direction: column; align-items: flex-end;
@@ -734,8 +827,17 @@
         <button class="tab-btn" data-view="log">📜 時間軸</button>
         <button class="tab-btn" data-view="settings">⚙️ 設定</button>
       </nav>
-      <button class="icon-btn" id="sound-btn" title="切換音效">🔊 音效</button>
+      <div class="sound-wrap">
+        <button class="icon-btn" id="sound-btn" title="點切換靜音 · 右鍵 / hover 開音量滑桿">🔊 音效</button>
+        <div class="sound-popover" id="sound-popover">
+          <div class="sound-pop-label">音量 <span id="sound-vol-display">100%</span></div>
+          <input type="range" id="sound-vol-slider" min="0" max="100" step="5" value="100">
+          <div class="sound-pop-hint">拖移即時調整，自動儲存</div>
+        </div>
+      </div>
       <a class="header-link" href="viewer.html" target="_blank">📺 監票</a>
+      <a class="header-link" href="overlay.html" target="_blank" title="OBS 直播浮層（透明背景，前 3 名）">📡 OBS</a>
+      <a class="header-link" href="poster.html" target="_blank" title="1080×1920 當選海報（IG/FB 直版分享）">🏆 海報</a>
       <a class="header-link" href="index.html">🏠 首頁</a>
       <div class="header-info">
         <span class="who" id="who">—</span>
@@ -798,6 +900,10 @@
         <input type="text" id="meta-input-subtitle" placeholder="DFC 行動方案 · 投票實況">
       </div>
       <div class="row">
+        <label>📺 直播連結</label>
+        <input type="text" id="meta-input-live" placeholder="YouTube live 連結（留空 = 不顯示）" style="width:380px; max-width:100%;">
+      </div>
+      <div class="row">
         <label>
           <input type="checkbox" id="meta-input-locked"> 封存本次投票（locked）
         </label>
@@ -843,7 +949,7 @@
 <script type="module">
 import {
   firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META
-} from './firebase-config.js?v=1.6.2';
+} from './firebase-config.js?v=1.7.0';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getAuth, signInWithEmailAndPassword, signOut,
@@ -854,7 +960,7 @@ import {
   runTransaction, onDisconnect, serverTimestamp,
   query, limitToLast, orderByChild
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-import { Sound } from './sound.js?v=1.6.2';
+import { Sound } from './sound.js?v=1.7.0';
 
 document.body.classList.remove('loading-app');
 
@@ -886,6 +992,46 @@ function bindSoundBtn() {
     Sound.unlock();
     refreshSoundBtn();
     if (!Sound.isMuted()) Sound.vote();
+  };
+
+  // popover slider 互動
+  const soundWrap = btn.closest('.sound-wrap');
+  const popover = document.getElementById('sound-popover');
+  const slider = document.getElementById('sound-vol-slider');
+  const volDisplay = document.getElementById('sound-vol-display');
+  if (!popover || !slider) return;
+
+  function refreshVolUI() {
+    const v = Math.round(Sound.getVolume() * 100);
+    slider.value = v;
+    volDisplay.textContent = v + '%';
+  }
+  refreshVolUI();
+
+  let popoverHoverTimer = null;
+  const openPopover = () => { popover.classList.add('show'); refreshVolUI(); };
+  const closePopover = () => popover.classList.remove('show');
+
+  soundWrap.addEventListener('mouseenter', () => {
+    popoverHoverTimer = setTimeout(openPopover, 220);
+  });
+  soundWrap.addEventListener('mouseleave', () => {
+    clearTimeout(popoverHoverTimer);
+    setTimeout(() => { if (!popover.matches(':hover')) closePopover(); }, 150);
+  });
+  btn.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    openPopover();
+  });
+  popover.addEventListener('mouseenter', () => clearTimeout(popoverHoverTimer));
+  popover.addEventListener('mouseleave', () => closePopover());
+  slider.oninput = () => {
+    Sound.setVolume(Number(slider.value) / 100);
+    Sound.unlock();
+    refreshVolUI();
+  };
+  slider.onchange = () => {
+    if (!Sound.isMuted() && Sound.getVolume() > 0) Sound.update();
   };
 }
 
@@ -1009,6 +1155,7 @@ function initAdminApp(db, auth, user) {
     document.title = '🔒 後台計票 — ' + (currentMeta.title || 'DFC 投票系統');
     document.getElementById('meta-input-title').value = currentMeta.title || '';
     document.getElementById('meta-input-subtitle').value = currentMeta.subtitle || '';
+    document.getElementById('meta-input-live').value = currentMeta.liveVideoUrl || '';
     document.getElementById('meta-input-locked').checked = !!currentMeta.locked;
     document.getElementById('lock-banner').style.display = currentMeta.locked ? 'block' : 'none';
     refreshFinaleBtn();
@@ -1239,6 +1386,7 @@ function initAdminApp(db, auth, user) {
       subtitle: document.getElementById('meta-input-subtitle').value.trim() || DEFAULT_META.subtitle,
       schoolName: currentMeta.schoolName || DEFAULT_META.schoolName,
       locked: document.getElementById('meta-input-locked').checked,
+      liveVideoUrl: document.getElementById('meta-input-live').value.trim(),
     };
     try { await set(ref(db, 'dfc/meta'), next); toast('活動資訊已儲存'); }
     catch (e) { toast('儲存失敗：' + e.message); }
@@ -1635,6 +1783,6 @@ printStyle.textContent = `
 document.head.appendChild(printStyle);
 </script>
 
-<script defer src="./version-check.js?v=1.6.2"></script>
+<script defer src="./version-check.js?v=1.7.0"></script>
 </body>
 </html>

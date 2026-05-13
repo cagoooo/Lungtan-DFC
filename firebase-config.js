@@ -39,7 +39,8 @@ export const DEFAULT_META = {
   title: "龍潭國小 第 123 屆 自治市小市長選舉",
   subtitle: "DFC 行動方案 · 投票實況",
   schoolName: "龍潭國小",
-  locked: false,   // true 時 admin 也無法再加票（封存用）
+  locked: false,        // true 時 admin 也無法再加票（封存用）
+  liveVideoUrl: "",     // 開票現場 YouTube live 連結（空字串 = 不顯示）
 };
 
 // 判斷是否還是預設佔位設定 — viewer/admin 可用來顯示「請先完成 setup」訊息

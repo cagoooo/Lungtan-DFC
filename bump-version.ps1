@@ -57,7 +57,7 @@ $vcContent = [regex]::Replace($vcContent, $pattern2, $replacement2)
 Write-Host "[ok] version-check.js APP_VERSION updated" -ForegroundColor Green
 
 # 4. all HTML files
-$htmlFiles = @("index.html", "viewer.html", "admin.html", "report.html")
+$htmlFiles = @("index.html", "viewer.html", "admin.html", "report.html", "overlay.html", "poster.html")
 foreach ($f in $htmlFiles) {
     $p = Join-Path $root $f
     if (-not (Test-Path $p)) { continue }

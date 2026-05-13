@@ -9,6 +9,7 @@
 //   Sound.isMuted();       // 查詢靜音狀態
 
 const STORAGE_KEY = 'dfc-sound-muted';
+const VOLUME_KEY = 'dfc-sound-volume';
 
 let audioCtx = null;
 function getCtx() {
@@ -31,18 +32,34 @@ function setMuted(v) {
   else localStorage.removeItem(STORAGE_KEY);
 }
 
-// 單音 helper：頻率、時長、波形、音量
+// master volume 0~1，預設 1.0
+function getVolume() {
+  const raw = localStorage.getItem(VOLUME_KEY);
+  if (raw === null) return 1.0;
+  const v = parseFloat(raw);
+  return isNaN(v) ? 1.0 : Math.max(0, Math.min(1, v));
+}
+
+function setVolumeStorage(v) {
+  const clamped = Math.max(0, Math.min(1, Number(v) || 0));
+  localStorage.setItem(VOLUME_KEY, String(clamped));
+}
+
+// 單音 helper：頻率、時長、波形、音量（gain 會自動乘上 master volume）
 function tone({ freq = 440, duration = 0.15, type = 'sine', gain = 0.2, attack = 0.005, release = 0.08, delay = 0 } = {}) {
   const ctx = getCtx();
   if (!ctx || muted()) return;
+  const vol = getVolume();
+  if (vol <= 0) return;
+  const g0 = gain * vol;
   const t0 = ctx.currentTime + delay;
   const osc = ctx.createOscillator();
   const g = ctx.createGain();
   osc.type = type;
   osc.frequency.setValueAtTime(freq, t0);
   g.gain.setValueAtTime(0, t0);
-  g.gain.linearRampToValueAtTime(gain, t0 + attack);
-  g.gain.linearRampToValueAtTime(gain * 0.7, t0 + duration - release);
+  g.gain.linearRampToValueAtTime(g0, t0 + attack);
+  g.gain.linearRampToValueAtTime(g0 * 0.7, t0 + duration - release);
   g.gain.linearRampToValueAtTime(0, t0 + duration);
   osc.connect(g);
   g.connect(ctx.destination);
@@ -54,6 +71,9 @@ function tone({ freq = 440, duration = 0.15, type = 'sine', gain = 0.2, attack =
 function slide({ from = 440, to = 880, duration = 0.2, type = 'sine', gain = 0.18, delay = 0 } = {}) {
   const ctx = getCtx();
   if (!ctx || muted()) return;
+  const vol = getVolume();
+  if (vol <= 0) return;
+  const g0 = gain * vol;
   const t0 = ctx.currentTime + delay;
   const osc = ctx.createOscillator();
   const g = ctx.createGain();
@@ -61,7 +81,7 @@ function slide({ from = 440, to = 880, duration = 0.2, type = 'sine', gain = 0.1
   osc.frequency.setValueAtTime(from, t0);
   osc.frequency.exponentialRampToValueAtTime(to, t0 + duration);
   g.gain.setValueAtTime(0, t0);
-  g.gain.linearRampToValueAtTime(gain, t0 + 0.01);
+  g.gain.linearRampToValueAtTime(g0, t0 + 0.01);
   g.gain.linearRampToValueAtTime(0, t0 + duration);
   osc.connect(g);
   g.connect(ctx.destination);
@@ -118,6 +138,10 @@ export const Sound = {
   },
   isMuted() { return muted(); },
   setMuted(v) { setMuted(!!v); },
+
+  // ----- 音量控制 (0~1) -----
+  getVolume,
+  setVolume(v) { setVolumeStorage(v); },
 
   // 解鎖 AudioContext — 必須在使用者互動時呼叫一次（瀏覽器 autoplay policy）
   unlock() {

@@ -16,10 +16,11 @@
         }
       },
       "meta": {
-        "title":      { ".validate": "newData.isString() && newData.val().length <= 100" },
-        "subtitle":   { ".validate": "newData.isString() && newData.val().length <= 100" },
-        "schoolName": { ".validate": "newData.isString() && newData.val().length <= 50" },
-        "locked":     { ".validate": "newData.isBoolean()" }
+        "title":        { ".validate": "newData.isString() && newData.val().length <= 100" },
+        "subtitle":     { ".validate": "newData.isString() && newData.val().length <= 100" },
+        "schoolName":   { ".validate": "newData.isString() && newData.val().length <= 50" },
+        "locked":       { ".validate": "newData.isBoolean()" },
+        "liveVideoUrl": { ".validate": "newData.isString() && newData.val().length <= 500" }
       },
       "log": {
         ".indexOn": ["ts"]

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏆 當選海報 — 龍潭國小 DFC 投票系統</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.7.0">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png?v=1.7.0">
+<meta name="theme-color" content="#c0392b">
+<meta name="robots" content="noindex, nofollow">
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    color: #fff;
+    background: #1a0508;
+  }
+  body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 12px 60px;
+  }
+
+  /* ==== toolbar ==== */
+  .toolbar {
+    position: sticky;
+    top: 0; z-index: 50;
+    background: linear-gradient(135deg, #c0392b, #962d22);
+    color: #fff;
+    width: 100%;
+    max-width: 720px;
+    padding: 12px 18px;
+    border-radius: 14px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .toolbar h1 { font-size: 15px; font-weight: 700; letter-spacing: 1px; }
+  .toolbar .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .toolbar .btn {
+    border: 0;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+    text-decoration: none;
+    color: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .toolbar .btn-primary {
+    background: #ffe0a0;
+    color: #6e1f17;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .toolbar .btn-primary:hover { background: #fff; transform: translateY(-1px); }
+  .toolbar .btn-primary:disabled { opacity: 0.6; cursor: wait; }
+  .toolbar .btn-ghost {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+  }
+  .toolbar .btn-ghost:hover { background: rgba(255,255,255,0.25); }
+  .toolbar-hint {
+    width: 100%;
+    font-size: 11px;
+    color: rgba(255,255,255,0.8);
+    margin-top: 4px;
+  }
+
+  /* ==== 預覽說明 ==== */
+  .preview-hint {
+    color: rgba(255,255,255,0.55);
+    font-size: 12px;
+    margin-bottom: 12px;
+    text-align: center;
+    max-width: 360px;
+  }
+
+  /* ==== 海報 1080×1920，預覽縮放至 360px 寬 ==== */
+  .poster-wrap {
+    width: 360px;
+    height: 640px; /* 360 × 16/9 不對，是 360 × 1920/1080 = 640 */
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .poster {
+    width: 1080px;
+    height: 1920px;
+    transform: scale(0.3333);
+    transform-origin: top left;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(255,220,140,0.18), transparent 45%),
+      radial-gradient(circle at 80% 90%, rgba(255,80,80,0.22), transparent 45%),
+      linear-gradient(180deg, #c0392b 0%, #6e1f17 50%, #2b0808 100%);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  }
+
+  /* ==== 載入狀態 ==== */
+  .loading {
+    color: rgba(255,255,255,0.6);
+    padding: 100px 20px;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  /* ==== 海報內容 ==== */
+  .p-content {
+    position: absolute;
+    inset: 0;
+    padding: 80px 70px;
+    display: flex;
+    flex-direction: column;
+  }
+  .p-school-tag {
+    display: inline-block;
+    align-self: center;
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(10px);
+    padding: 14px 36px;
+    border-radius: 999px;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 30px;
+  }
+  .p-event-name {
+    text-align: center;
+    font-size: 50px;
+    font-weight: 800;
+    letter-spacing: 6px;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    text-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  }
+  .p-event-sub {
+    text-align: center;
+    font-size: 28px;
+    opacity: 0.85;
+    margin-bottom: 40px;
+    letter-spacing: 4px;
+  }
+
+  /* ==== 當選大區塊 ==== */
+  .p-winner-banner {
+    text-align: center;
+    margin: 30px 0 25px;
+  }
+  .p-winner-banner-title {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffe0a0, #f0b400);
+    color: #6e1f17;
+    padding: 18px 70px;
+    border-radius: 999px;
+    font-size: 56px;
+    font-weight: 900;
+    letter-spacing: 12px;
+    box-shadow: 0 14px 40px rgba(255,224,160,0.4), inset 0 -4px 0 rgba(150,100,0,0.3);
+    text-shadow: 0 2px 0 rgba(255,255,255,0.3);
+  }
+
+  /* ==== 當選方案大卡片 ==== */
+  .p-winner-card {
+    background: linear-gradient(135deg, rgba(255,224,160,0.2), rgba(212,160,23,0.12));
+    border: 4px solid rgba(255,224,160,0.7);
+    border-radius: 36px;
+    padding: 40px 44px;
+    margin-bottom: 28px;
+    box-shadow:
+      0 0 80px rgba(255,224,160,0.4),
+      0 24px 60px rgba(0,0,0,0.5),
+      inset 0 0 60px rgba(255,224,160,0.08);
+  }
+  .p-winner-photo {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(135deg, #faf3ea, #efe4d4);
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 28px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+  .p-winner-photo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .p-winner-photo-empty {
+    color: #999;
+    font-size: 28px;
+  }
+  .p-winner-crown {
+    text-align: center;
+    font-size: 100px;
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .p-winner-class {
+    text-align: center;
+    font-size: 44px;
+    color: #ffe0a0;
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+  }
+  .p-winner-name {
+    text-align: center;
+    font-size: 62px;
+    font-weight: 900;
+    line-height: 1.3;
+    margin-bottom: 28px;
+    color: #fff;
+    text-shadow: 0 6px 16px rgba(0,0,0,0.5);
+  }
+  .p-winner-votes {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .p-winner-votes-pill {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 12px;
+    background: rgba(255,224,160,0.25);
+    border: 2px solid rgba(255,224,160,0.5);
+    padding: 16px 44px;
+    border-radius: 999px;
+  }
+  .p-winner-votes-num {
+    font-size: 80px;
+    font-weight: 900;
+    color: #ffe0a0;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .p-winner-votes-label {
+    font-size: 32px;
+    color: rgba(255,255,255,0.9);
+    font-weight: 700;
+  }
+  .p-winner-votes-pct {
+    font-size: 26px;
+    color: rgba(255,255,255,0.75);
+    margin-left: 16px;
+  }
+
+  /* ==== 並列當選格式 ==== */
+  .p-tied-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .p-tied-card {
+    background: rgba(0,0,0,0.35);
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+  }
+  .p-tied-card img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: contain;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    background: linear-gradient(135deg, #faf3ea, #efe4d4);
+  }
+  .p-tied-card .cls { color: #ffe0a0; font-weight: 700; font-size: 30px; letter-spacing: 2px; }
+  .p-tied-card .nm { color: #fff; font-weight: 900; font-size: 38px; margin: 6px 0; line-height: 1.2; }
+  .p-tied-card .votes { color: #ffe0a0; font-size: 44px; font-weight: 900; }
+
+  /* ==== 第 2-3 名 ==== */
+  .p-others {
+    margin-top: auto;
+    padding-top: 20px;
+  }
+  .p-others-title {
+    text-align: center;
+    font-size: 24px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 8px;
+    margin-bottom: 16px;
+  }
+  .p-others-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .p-other-row {
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 18px;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: center;
+    gap: 14px;
+  }
+  .p-other-rank {
+    font-size: 36px;
+    font-weight: 900;
+    text-align: center;
+    line-height: 1;
+  }
+  .p-other-rank[data-r="2"] { color: #d0d0d0; }
+  .p-other-rank[data-r="3"] { color: #f5c89a; }
+  .p-other-info { min-width: 0; }
+  .p-other-cls {
+    color: rgba(255,255,255,0.7);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  .p-other-name {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+  .p-other-votes {
+    text-align: right;
+    color: #ffe0a0;
+    font-size: 30px;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ==== footer ==== */
+  .p-footer {
+    margin-top: 32px;
+    text-align: center;
+    color: rgba(255,255,255,0.55);
+    font-size: 18px;
+    letter-spacing: 2px;
+  }
+  .p-footer .date {
+    font-size: 22px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 4px;
+  }
+  .p-footer .url {
+    font-family: ui-monospace, monospace;
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 8px;
+  }
+
+  /* 等待狀態 / 未開票 */
+  .p-no-winner {
+    text-align: center;
+    padding: 120px 40px;
+    color: rgba(255,255,255,0.6);
+  }
+  .p-no-winner .big-icon { font-size: 120px; margin-bottom: 30px; }
+  .p-no-winner h2 { font-size: 56px; font-weight: 700; margin-bottom: 14px; }
+  .p-no-winner p { font-size: 28px; opacity: 0.8; }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <h1>🏆 1080×1920 當選海報</h1>
+  <div class="actions">
+    <button class="btn btn-primary" id="download-btn">📥 下載海報 PNG</button>
+    <button class="btn btn-ghost" id="refresh-btn">🔄 重抓資料</button>
+    <a class="btn btn-ghost" href="admin.html">← 回後台</a>
+    <a class="btn btn-ghost" href="viewer.html" target="_blank">📺 監票</a>
+  </div>
+  <div class="toolbar-hint">💡 1080×1920 直版海報，適合 IG / FB / LINE 群組分享。預覽為實際 1/3 尺寸縮圖。</div>
+</div>
+
+<div class="preview-hint">▼ 預覽圖（實際下載為 1080×1920 高解析）</div>
+
+<div class="poster-wrap">
+  <div class="poster" id="poster">
+    <div class="loading">⏳ 載入中…</div>
+  </div>
+</div>
+
+<script type="module">
+import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.7.0';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+const posterEl = document.getElementById('poster');
+let db = null;
+
+async function loadAndRender() {
+  if (isPlaceholderConfig()) {
+    posterEl.innerHTML = '<div class="loading">⚠️ Firebase 尚未設定</div>';
+    return;
+  }
+  try {
+    if (!db) {
+      const app = initializeApp(firebaseConfig);
+      db = getDatabase(app);
+    }
+    posterEl.innerHTML = '<div class="loading">⏳ 抓取最新資料…</div>';
+    const snap = await get(ref(db, 'dfc'));
+    const data = snap.val() || {};
+    renderPoster(data);
+  } catch (err) {
+    posterEl.innerHTML = `<div class="loading">❌ ${escapeHtml(err.message || String(err))}</div>`;
+    console.error(err);
+  }
+}
+
+function renderPoster(data) {
+  const meta = { ...DEFAULT_META, ...(data.meta || {}) };
+  const rawActions = data.actions
+    ? Object.values(data.actions).filter(a => a && typeof a === 'object')
+    : DEFAULT_ACTIONS.map(a => ({ ...a }));
+  const items = [...rawActions].sort((a, b) =>
+    (b.votes || 0) - (a.votes || 0) || (a.number || 0) - (b.number || 0));
+  const total = items.reduce((s, a) => s + (Number(a.votes) || 0), 0);
+  // 名次
+  const rankOf = new Array(items.length).fill(1);
+  for (let i = 1; i < items.length; i++) {
+    rankOf[i] = items[i].votes === items[i - 1].votes ? rankOf[i - 1] : i + 1;
+  }
+  const winners = items.filter((p, i) => rankOf[i] === 1 && (p.votes || 0) > 0);
+  const isTie = winners.length >= 2;
+
+  const now = new Date();
+  const dateStr = `${now.getFullYear()} 年 ${String(now.getMonth() + 1).padStart(2, '0')} 月 ${String(now.getDate()).padStart(2, '0')} 日`;
+
+  // 沒有得票：顯示「尚未開票」
+  if (winners.length === 0) {
+    posterEl.innerHTML = `
+      <div class="p-content">
+        <div class="p-school-tag">🏫 ${escapeHtml(meta.schoolName || '龍潭國小')}</div>
+        <div class="p-event-name">${escapeHtml(meta.title || '第 123 屆 自治市小市長選舉')}</div>
+        <div class="p-event-sub">${escapeHtml(meta.subtitle || 'DFC 行動方案')}</div>
+        <div class="p-no-winner">
+          <div class="big-icon">⏳</div>
+          <h2>尚未開票</h2>
+          <p>等到開票結束、產生當選方案後，<br>本頁會自動顯示得獎名單。</p>
+        </div>
+        <div class="p-footer">
+          <div class="date">${dateStr}</div>
+          <div>本海報由 ${escapeHtml(meta.schoolName || '龍潭國小')} DFC 投票系統 自動產生</div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const others = items.filter((p, i) => rankOf[i] !== 1).slice(0, 4);
+  const otherRanks = items.filter((p, i) => rankOf[i] !== 1).map((p, i) => rankOf[items.indexOf(p)]);
+
+  let winnerHtml;
+  if (isTie) {
+    winnerHtml = `
+      <div class="p-winner-card">
+        <div class="p-winner-crown">🤝</div>
+        <div class="p-winner-class" style="font-size: 36px; margin-bottom: 24px;">並列當選</div>
+        <div class="p-tied-list">
+          ${winners.map(w => `
+            <div class="p-tied-card">
+              ${w.photo ? `<img src="${escapeAttr(w.photo)}" alt="" onerror="this.style.display='none'">` : '<div style="width:100%;aspect-ratio:16/9;background:#222;border-radius:14px;margin-bottom:14px;"></div>'}
+              <div class="cls">${escapeHtml(w.className || '')}</div>
+              <div class="nm">${escapeHtml(w.name || '')}</div>
+              <div class="votes">${w.votes} 票</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  } else {
+    const w = winners[0];
+    const pct = total > 0 ? ((w.votes / total) * 100).toFixed(1) : '0.0';
+    winnerHtml = `
+      <div class="p-winner-card">
+        <div class="p-winner-photo">
+          ${w.photo
+            ? `<img src="${escapeAttr(w.photo)}" alt="" onerror="this.outerHTML='<div class=\\'p-winner-photo-empty\\'>（無海報）</div>'">`
+            : '<div class="p-winner-photo-empty">（無海報）</div>'}
+        </div>
+        <div class="p-winner-crown">👑</div>
+        <div class="p-winner-class">${escapeHtml(w.className || '')}</div>
+        <div class="p-winner-name">${escapeHtml(w.name || '')}</div>
+        <div class="p-winner-votes">
+          <div class="p-winner-votes-pill">
+            <span class="p-winner-votes-num">${w.votes}</span>
+            <span class="p-winner-votes-label">票</span>
+            <span class="p-winner-votes-pct">${pct}%</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  let othersHtml = '';
+  if (others.length > 0) {
+    othersHtml = `
+      <div class="p-others">
+        <div class="p-others-title">─── 其 他 方 案 ───</div>
+        <div class="p-others-list">
+          ${others.map((p, i) => {
+            const realRank = otherRanks[i] || (i + 2);
+            return `
+              <div class="p-other-row">
+                <div class="p-other-rank" data-r="${realRank}">${realRank}</div>
+                <div class="p-other-info">
+                  <div class="p-other-cls">${escapeHtml(p.className || '')}</div>
+                  <div class="p-other-name">${escapeHtml(p.name || '')}</div>
+                </div>
+                <div class="p-other-votes">${p.votes || 0}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  posterEl.innerHTML = `
+    <div class="p-content">
+      <div class="p-school-tag">🏫 ${escapeHtml(meta.schoolName || '龍潭國小')}</div>
+      <div class="p-event-name">${escapeHtml(meta.title || '第 123 屆 自治市小市長選舉')}</div>
+      <div class="p-event-sub">${escapeHtml(meta.subtitle || 'DFC 行動方案')}</div>
+
+      <div class="p-winner-banner">
+        <div class="p-winner-banner-title">${isTie ? '並列當選' : '✨ 當 選 ✨'}</div>
+      </div>
+
+      ${winnerHtml}
+      ${othersHtml}
+
+      <div class="p-footer">
+        <div class="date">📅 ${dateStr}　·　總票數 ${total} 票</div>
+        <div>本海報由 ${escapeHtml(meta.schoolName || '龍潭國小')} DFC 投票系統 自動產生</div>
+        <div class="url">cagoooo.github.io/Lungtan-DFC</div>
+      </div>
+    </div>
+  `;
+}
+
+function escapeHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+// ===== 下載 PNG（html-to-image，1080×1920 原尺寸 高解析）=====
+document.getElementById('download-btn').addEventListener('click', async () => {
+  const btn = document.getElementById('download-btn');
+  const oldText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '⏳ 生成中…';
+  try {
+    if (!window.htmlToImage) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.min.js';
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+    }
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+
+    // 暫時把 poster transform 移除，截 1080×1920 原尺寸
+    const poster = document.getElementById('poster');
+    const originalTransform = poster.style.transform;
+    poster.style.transform = 'none';
+
+    const dataUrl = await window.htmlToImage.toPng(poster, {
+      width: 1080,
+      height: 1920,
+      pixelRatio: 1,
+      cacheBust: true,
+      backgroundColor: '#1a0508',
+    });
+
+    poster.style.transform = originalTransform;
+
+    const a = document.createElement('a');
+    const ts = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+    a.download = `DFC當選海報_${ts}.png`;
+    a.href = dataUrl;
+    a.click();
+
+    btn.textContent = '✓ 已下載';
+    setTimeout(() => { btn.textContent = oldText; btn.disabled = false; }, 2200);
+  } catch (err) {
+    console.error(err);
+    alert('下載失敗：' + err.message);
+    btn.textContent = '❌ 失敗';
+    setTimeout(() => { btn.textContent = oldText; btn.disabled = false; }, 2000);
+  }
+});
+
+document.getElementById('refresh-btn').addEventListener('click', loadAndRender);
+loadAndRender();
+</script>
+
+<script defer src="./version-check.js?v=1.7.0"></script>
+</body>
+</html>

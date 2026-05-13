@@ -1,5 +1,5 @@
 {
-  "version": "1.6.2",
-  "released": "2026-05-13T19:39:46+08:00",
-  "notes": "v1.6.2: viewer RWD - same max-height 1000 mid-compression as admin"
+  "version": "1.7.0",
+  "released": "2026-05-13T20:03:34+08:00",
+  "notes": "v1.7.0: volume slider + YouTube live embed + OBS overlay + 1080x1920 poster"
 }

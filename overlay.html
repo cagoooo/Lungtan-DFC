@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OBS 直播浮層 — 龍潭國小 DFC 投票系統</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.7.0">
+<meta name="robots" content="noindex, nofollow">
+
+<style>
+  /*
+   * OBS 瀏覽器來源用法：
+   *   URL: https://cagoooo.github.io/Lungtan-DFC/overlay.html
+   *   寬度: 1920    高度: 1080
+   *   自訂 CSS (留空，不要勾「使用自訂 CSS」)
+   *   ☑ 控制視訊裝置可見性 / ☑ 重新整理瀏覽器 (建議)
+   *   背景透明：OBS 預設透明 ✓
+   *
+   * URL 參數：
+   *   ?pos=bl     左下（預設）
+   *   ?pos=tl     左上
+   *   ?pos=tr     右上
+   *   ?pos=br     右下
+   *   ?scale=0.9  整體縮放 0.5~2.0（OBS 內也可手動縮放，這個給細部）
+   *   ?theme=dark 強制暗色（預設自動）
+   */
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: transparent !important;
+    color: #fff;
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .overlay-root {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+  }
+  /* 4 個 anchor 位置 */
+  .overlay-root[data-pos="bl"] .panel { left: 32px; bottom: 32px; }
+  .overlay-root[data-pos="tl"] .panel { left: 32px; top: 32px; }
+  .overlay-root[data-pos="tr"] .panel { right: 32px; top: 32px; }
+  .overlay-root[data-pos="br"] .panel { right: 32px; bottom: 32px; }
+
+  .panel {
+    position: absolute;
+    min-width: 480px;
+    max-width: 640px;
+    transform-origin: center;
+    transition: opacity .4s;
+  }
+
+  /* ==== 標題列 ==== */
+  .ov-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, rgba(192,57,43,0.95), rgba(150,45,34,0.95));
+    padding: 8px 18px;
+    border-radius: 999px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .ov-header .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #6df76d;
+    box-shadow: 0 0 0 0 rgba(109,247,109,0.7);
+    animation: ov-pulse 1.6s infinite;
+  }
+  @keyframes ov-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(109,247,109,0.7); }
+    70%  { box-shadow: 0 0 0 8px rgba(109,247,109,0); }
+    100% { box-shadow: 0 0 0 0 rgba(109,247,109,0); }
+  }
+
+  /* ==== 前三名卡片 ==== */
+  .ov-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .ov-row {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 10px 18px;
+    background: rgba(15, 8, 8, 0.85);
+    border-left: 4px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: ov-slide-in .5s cubic-bezier(.4,1.4,.5,1) backwards;
+  }
+  @keyframes ov-slide-in {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .ov-row[data-rank="1"] { border-left-color: #f0b400; background: rgba(50, 30, 0, 0.9); }
+  .ov-row[data-rank="2"] { border-left-color: #c0c0c0; }
+  .ov-row[data-rank="3"] { border-left-color: #b87333; }
+  .ov-row.bump { animation: ov-bump .6s ease-out; }
+  @keyframes ov-bump {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.04); box-shadow: 0 0 24px 4px rgba(255,224,160,0.5), 0 4px 14px rgba(0,0,0,0.4); }
+  }
+
+  .ov-rank {
+    font-size: 28px;
+    font-weight: 900;
+    text-align: center;
+    line-height: 1;
+    color: rgba(255,255,255,0.7);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  }
+  .ov-row[data-rank="1"] .ov-rank { color: #ffe0a0; }
+  .ov-row[data-rank="2"] .ov-rank { color: #e0e0e0; }
+  .ov-row[data-rank="3"] .ov-rank { color: #f5c89a; }
+
+  .ov-info { min-width: 0; }
+  .ov-class {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .ov-name {
+    font-size: 17px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  }
+  .ov-votes {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .ov-votes-num {
+    font-size: 30px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    display: block;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .ov-row[data-rank="1"] .ov-votes-num { color: #ffe0a0; }
+  .ov-votes-num.bump { transform: scale(1.3); }
+  .ov-votes-pct {
+    font-size: 11px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 2px;
+    display: block;
+  }
+
+  /* ==== 底部統計列 ==== */
+  .ov-stats {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .ov-stat-pill {
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .ov-stat-pill strong {
+    color: #ffe0a0;
+    font-size: 16px;
+    font-variant-numeric: tabular-nums;
+    margin: 0 4px;
+  }
+
+  /* ==== 等待狀態 ==== */
+  .ov-waiting {
+    padding: 14px 22px;
+    background: rgba(0,0,0,0.75);
+    border-radius: 8px;
+    color: rgba(255,255,255,0.85);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  /* ==== 當選通告（locked = true 時觸發） ==== */
+  .ov-winner {
+    background: linear-gradient(135deg, rgba(212,160,23,0.95), rgba(150,100,0,0.9));
+    border-left: 6px solid #ffe0a0;
+    padding: 14px 22px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 6px 22px rgba(212,160,23,0.5);
+    backdrop-filter: blur(10px);
+    animation: ov-winner-glow 3s ease-in-out infinite;
+  }
+  @keyframes ov-winner-glow {
+    0%, 100% { box-shadow: 0 6px 22px rgba(212,160,23,0.5); }
+    50%      { box-shadow: 0 6px 36px rgba(255,224,160,0.8); }
+  }
+  .ov-winner-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 4px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .ov-winner-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  .ov-winner-title .crown {
+    margin-right: 8px;
+    animation: ov-crown 2s ease-in-out infinite;
+    display: inline-block;
+  }
+  @keyframes ov-crown {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-4px); }
+  }
+  .ov-winner-votes {
+    font-size: 14px;
+    color: rgba(255,255,255,0.95);
+    margin-top: 4px;
+  }
+  .ov-winner-votes strong {
+    font-size: 18px;
+    color: #fff;
+    margin: 0 4px;
+  }
+
+  /* 連線錯誤 */
+  .ov-error {
+    padding: 12px 20px;
+    background: rgba(150,30,30,0.85);
+    color: #fff;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="overlay-root" id="overlay-root" data-pos="bl">
+  <div class="panel">
+    <div class="ov-header">
+      <span class="dot"></span>
+      <span id="ov-title">即時開票</span>
+    </div>
+    <div id="ov-main">
+      <div class="ov-waiting">⏳ 正在連線 Firebase…</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { firebaseConfig, isPlaceholderConfig, DEFAULT_META } from './firebase-config.js?v=1.7.0';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+// URL 參數
+const params = new URLSearchParams(location.search);
+const pos = params.get('pos') || 'bl';
+const scale = parseFloat(params.get('scale') || '1') || 1;
+const root = document.getElementById('overlay-root');
+root.dataset.pos = ['bl', 'tl', 'tr', 'br'].includes(pos) ? pos : 'bl';
+if (scale !== 1) {
+  document.querySelector('.panel').style.transform = `scale(${scale})`;
+  document.querySelector('.panel').style.transformOrigin = pos.includes('t') ? 'top' : 'bottom';
+}
+
+if (isPlaceholderConfig()) {
+  document.getElementById('ov-main').innerHTML = '<div class="ov-error">⚠️ Firebase 尚未設定</div>';
+} else {
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  let currentMeta = { ...DEFAULT_META };
+  let prevVotes = {};
+  let prevLeaderId = null;
+
+  onValue(ref(db, 'dfc/meta'), (snap) => {
+    currentMeta = { ...DEFAULT_META, ...(snap.val() || {}) };
+    if (currentMeta.title) document.getElementById('ov-title').textContent = currentMeta.title;
+  });
+
+  onValue(ref(db, 'dfc/actions'), (snap) => {
+    const data = snap.val();
+    if (!data) {
+      document.getElementById('ov-main').innerHTML = '<div class="ov-waiting">⏳ 尚未開票</div>';
+      return;
+    }
+    const items = Object.values(data)
+      .filter(a => a && typeof a === 'object')
+      .sort((a, b) => (b.votes || 0) - (a.votes || 0) || (a.number || 0) - (b.number || 0));
+    const total = items.reduce((s, a) => s + (Number(a.votes) || 0), 0);
+    const top3 = items.slice(0, 3);
+
+    // 計算名次（含並列）
+    const rankByIdx = new Array(top3.length).fill(1);
+    for (let i = 1; i < top3.length; i++) {
+      rankByIdx[i] = top3[i].votes === top3[i - 1].votes ? rankByIdx[i - 1] : i + 1;
+    }
+    const winners = items.filter((p, i) => i === 0 || p.votes === items[0].votes).filter(p => p.votes > 0);
+
+    let html = '';
+
+    // 封存模式：上方顯示當選通告
+    if (currentMeta.locked && winners.length > 0) {
+      const w = winners[0];
+      const isTie = winners.length >= 2;
+      const pct = total > 0 ? ((w.votes / total) * 100).toFixed(1) : '0.0';
+      html += `
+        <div class="ov-winner">
+          <div class="ov-winner-label">${isTie ? '並列當選' : '當選方案'}</div>
+          <div class="ov-winner-title"><span class="crown">${isTie ? '🤝' : '👑'}</span>${escapeHtml(w.className || '')}　${escapeHtml(w.name || '')}</div>
+          <div class="ov-winner-votes">得 <strong>${w.votes}</strong> 票・<strong>${pct}%</strong></div>
+        </div>
+      `;
+    }
+
+    if (total === 0) {
+      html += '<div class="ov-waiting">⏳ 投票尚未開始</div>';
+    } else {
+      html += '<div class="ov-list">';
+      top3.forEach((p, i) => {
+        const votes = Number(p.votes) || 0;
+        const pct = total > 0 ? ((votes / total) * 100).toFixed(1) : '0.0';
+        const rank = rankByIdx[i];
+        const key = p.id || p.number;
+        const isNew = prevVotes[key] != null && votes > prevVotes[key];
+        html += `
+          <div class="ov-row${isNew ? ' bump' : ''}" data-rank="${rank}" data-key="${key}">
+            <div class="ov-rank">${rank}</div>
+            <div class="ov-info">
+              <div class="ov-class">${escapeHtml(p.className || '')}</div>
+              <div class="ov-name">${escapeHtml(p.name || '')}</div>
+            </div>
+            <div class="ov-votes">
+              <span class="ov-votes-num${isNew ? ' bump' : ''}">${votes}</span>
+              <span class="ov-votes-pct">${pct}%</span>
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      html += `
+        <div class="ov-stats">
+          <span class="ov-stat-pill">總票數 <strong>${total}</strong> 票</span>
+          <span class="ov-stat-pill">參選 <strong>${items.length}</strong> 個方案</span>
+        </div>
+      `;
+    }
+
+    document.getElementById('ov-main').innerHTML = html;
+
+    // 更新 prevVotes
+    items.forEach(p => { prevVotes[p.id || p.number] = Number(p.votes) || 0; });
+  });
+}
+
+function escapeHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+</script>
+</body>
+</html>
