@@ -1,5 +1,5 @@
 {
-  "version": "1.4.3",
-  "released": "2026-05-13T13:31:43+08:00",
-  "notes": "v1.4.3: lightbox rank badge follow waiting state + medal icons + hide 0pct"
+  "version": "1.4.4",
+  "released": "2026-05-13T13:40:08+08:00",
+  "notes": "v1.4.4: lightbox indicator dots moved between img and info, modern bar style"
 }
