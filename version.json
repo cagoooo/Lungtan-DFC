@@ -1,5 +1,5 @@
 {
-  "version": "1.6.0",
-  "released": "2026-05-13T16:36:44+08:00",
-  "notes": "v1.6.0: A4 election report page with print/save-as-PDF"
+  "version": "1.6.1",
+  "released": "2026-05-13T19:33:57+08:00",
+  "notes": "v1.6.1: admin RWD - new max-height 1000 breakpoint for 1080p with browser chrome"
 }

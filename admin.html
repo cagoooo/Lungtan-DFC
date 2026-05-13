@@ -6,11 +6,11 @@
 <title>🔒 後台計票 — 龍潭國小 DFC 投票系統</title>
 
 <!-- Favicon + PWA -->
-<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.6.0">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.6.0">
-<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.6.0">
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.6.0">
-<link rel="manifest" href="./manifest.json?v=1.6.0">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.6.1">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png?v=1.6.1">
+<link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png?v=1.6.1">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=1.6.1">
+<link rel="manifest" href="./manifest.json?v=1.6.1">
 <meta name="theme-color" content="#c0392b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -624,20 +624,40 @@
     .summary-info .total { font-size: 32px; }
   }
 
-  /* 矮螢幕（13" 筆電 1366×768 或 1080p 開了工具列）— 一螢幕仍要看完 6 個 */
-  @media (max-height: 820px) {
-    .app { padding-top: 10px; padding-bottom: 30px; }
-    .app-header { padding: 8px 0 10px; margin-bottom: 10px; }
-    .summary { padding: 10px 18px; margin-bottom: 12px; }
-    .card { grid-template-rows: 100px 1fr auto; }
-    .card-photo-frame { height: 100px; }
-    .vote-count { font-size: 36px; }
-    .btn-plus { width: 56px; height: 56px; font-size: 30px; }
-    .btn-minus { width: 34px; height: 34px; font-size: 20px; }
-    .card-name { font-size: 15px; }
+  /* 中等壓縮：1080p 螢幕但有瀏覽器 chrome（書籤列 / tabs / devtools 等），
+     可用 viewport ~900-1000px → 預設 160px 海報 + 76px 按鈕塞不下 6 個 */
+  @media (max-height: 1000px) {
+    .app { padding-top: 10px; padding-bottom: 24px; }
+    .app-header { padding: 8px 0 10px; margin-bottom: 12px; }
+    .summary { padding: 10px 20px; margin-bottom: 12px; }
+    .summary-info .total { font-size: 32px; }
+    .card { grid-template-rows: 120px 1fr auto; }
+    .card-photo-frame { height: 120px; }
+    .vote-count { font-size: 42px; }
+    .btn-plus { width: 60px; height: 60px; font-size: 32px; }
+    .btn-minus { width: 36px; height: 36px; font-size: 20px; }
+    .card-name { font-size: 16px; }
     .card-body { padding: 10px 14px 6px; }
     .card-votes { padding: 10px 14px 12px; }
-    .summary-info .total { font-size: 28px; }
+    .app-header h1 { font-size: 22px; }
+  }
+
+  /* 進階壓縮：13" 筆電 1366×768 或 1080p 含工具列已超載 — 6 個方案一螢幕完整看完 */
+  @media (max-height: 820px) {
+    .app { padding-top: 6px; padding-bottom: 18px; }
+    .app-header { padding: 6px 0 8px; margin-bottom: 8px; }
+    .summary { padding: 8px 14px; margin-bottom: 10px; }
+    .card { grid-template-rows: 92px 1fr auto; }
+    .card-photo-frame { height: 92px; }
+    .vote-count { font-size: 32px; }
+    .btn-plus { width: 50px; height: 50px; font-size: 26px; }
+    .btn-minus { width: 32px; height: 32px; font-size: 18px; }
+    .card-name { font-size: 14px; }
+    .card-body { padding: 6px 12px 4px; }
+    .card-votes { padding: 8px 12px 10px; }
+    .summary-info .total { font-size: 24px; }
+    .app-header h1 { font-size: 19px; }
+    .app-header h1 small { font-size: 11px; }
   }
 
   /* 1100px 以下：2 欄 */
@@ -823,7 +843,7 @@
 <script type="module">
 import {
   firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META
-} from './firebase-config.js?v=1.6.0';
+} from './firebase-config.js?v=1.6.1';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getAuth, signInWithEmailAndPassword, signOut,
@@ -834,7 +854,7 @@ import {
   runTransaction, onDisconnect, serverTimestamp,
   query, limitToLast, orderByChild
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
-import { Sound } from './sound.js?v=1.6.0';
+import { Sound } from './sound.js?v=1.6.1';
 
 document.body.classList.remove('loading-app');
 
@@ -1615,6 +1635,6 @@ printStyle.textContent = `
 document.head.appendChild(printStyle);
 </script>
 
-<script defer src="./version-check.js?v=1.6.0"></script>
+<script defer src="./version-check.js?v=1.6.1"></script>
 </body>
 </html>
