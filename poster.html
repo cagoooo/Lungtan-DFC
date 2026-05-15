@@ -6,8 +6,8 @@
 <title>🏆 當選海報 — 龍潭國小 DFC 投票系統</title>
 
 <!-- Favicon -->
-<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.7.2">
-<link rel="apple-touch-icon" href="./apple-touch-icon.png?v=1.7.2">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg?v=1.7.3">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png?v=1.7.3">
 <meta name="theme-color" content="#c0392b">
 <meta name="robots" content="noindex, nofollow">
 
@@ -25,6 +25,21 @@
     flex-direction: column;
     align-items: center;
     padding: 16px 12px 60px;
+  }
+
+  /* ===== RWD: 手機 / 平板 ===== */
+  @media (max-width: 600px) {
+    body { padding: 10px 10px 40px; }
+    .toolbar { padding: 10px 14px; border-radius: 12px; margin-bottom: 12px; }
+    .toolbar h1 { font-size: 13px; width: 100%; }
+    .toolbar .actions { width: 100%; justify-content: space-between; }
+    .toolbar .btn { padding: 7px 12px; font-size: 12px; }
+    .toolbar-hint { font-size: 10px; line-height: 1.4; }
+    .preview-hint { font-size: 11px; margin-bottom: 10px; }
+  }
+  @media (max-width: 380px) {
+    .toolbar .btn { padding: 6px 10px; font-size: 11px; }
+    .toolbar .actions { gap: 5px; }
   }
 
   /* ==== toolbar ==== */
@@ -90,21 +105,26 @@
     max-width: 360px;
   }
 
-  /* ==== 海報 1080×1920，預覽縮放至 360px 寬 ==== */
+  /* ==== 海報 1080×1920，預覽寬度動態 fit viewport ==== */
   .poster-wrap {
-    width: 360px;
-    height: 640px; /* 360 × 16/9 不對，是 360 × 1920/1080 = 640 */
+    /* 寬度動態：手機填滿可用區、平板 / 桌機限 420px */
+    width: 100%;
+    max-width: 420px;
+    /* 高度由 JS fitPosterPreview() 設定 = width × (1920/1080) */
+    aspect-ratio: 1080 / 1920;
     overflow: hidden;
     border-radius: 16px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    position: relative;
   }
   .poster {
     width: 1080px;
     height: 1920px;
-    transform: scale(0.3333);
+    /* transform: scale() 由 JS fitPosterPreview() 動態套用 */
     transform-origin: top left;
     color: #fff;
-    position: relative;
+    position: absolute;
+    top: 0; left: 0;
     overflow: hidden;
     background:
       radial-gradient(circle at 20% 10%, rgba(255,220,140,0.18), transparent 45%),
@@ -394,7 +414,7 @@
 </div>
 
 <script type="module">
-import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.7.2';
+import { firebaseConfig, isPlaceholderConfig, DEFAULT_ACTIONS, DEFAULT_META } from './firebase-config.js?v=1.7.3';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
 
@@ -609,9 +629,26 @@ document.getElementById('download-btn').addEventListener('click', async () => {
 });
 
 document.getElementById('refresh-btn').addEventListener('click', loadAndRender);
+
+// ===== 動態 fit poster 到 viewport 寬度（手機 RWD）=====
+function fitPosterPreview() {
+  const wrap = document.querySelector('.poster-wrap');
+  const poster = document.getElementById('poster');
+  if (!wrap || !poster) return;
+  const w = wrap.clientWidth;
+  if (w <= 0) return;
+  const scale = w / 1080;
+  poster.style.transform = `scale(${scale})`;
+  // aspect-ratio 已自動算高度，這裡不用設 wrap.height
+}
+window.addEventListener('resize', fitPosterPreview);
+window.addEventListener('orientationchange', () => setTimeout(fitPosterPreview, 200));
+// 初次 + 載入後再 fit 一次（DOM 更新完才能拿到正確 width）
 loadAndRender();
+setTimeout(fitPosterPreview, 0);
+setTimeout(fitPosterPreview, 300);
 </script>
 
-<script defer src="./version-check.js?v=1.7.2"></script>
+<script defer src="./version-check.js?v=1.7.3"></script>
 </body>
 </html>

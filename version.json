@@ -1,5 +1,5 @@
 {
-  "version": "1.7.2",
-  "released": "2026-05-13T20:20:30+08:00",
-  "notes": "v1.7.2: lightbox shorter poster + scrollable content fits 100vh"
+  "version": "1.7.3",
+  "released": "2026-05-15T13:19:58+08:00",
+  "notes": "v1.7.3: poster.html RWD - dynamic fit to viewport width on mobile"
 }
