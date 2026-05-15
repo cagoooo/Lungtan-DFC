@@ -1,5 +1,5 @@
 {
-  "version": "1.7.3",
-  "released": "2026-05-15T13:19:58+08:00",
-  "notes": "v1.7.3: poster.html RWD - dynamic fit to viewport width on mobile"
+  "version": "1.7.4",
+  "released": "2026-05-15T13:28:07+08:00",
+  "notes": "v1.7.4: ceremony mobile scrollable + confetti stays in viewport"
 }
