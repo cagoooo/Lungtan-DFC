@@ -1,5 +1,7 @@
 # 🗳️ 龍潭國小 第 123 屆 自治市小市長選舉 — DFC 投票系統
 
+> 📌 **目前版本：v1.7.5**（依據 程式內版本常數）
+
 即時計票 + 即時監票的雙端系統，部署在 **GitHub Pages**，後端用 **Firebase Realtime Database** 同步資料、**Firebase Auth** 保護後台寫入。
 
 > 模式參考自 [cagoooo/Little-Mayer](https://github.com/cagoooo/Little-Mayer)（石門國小自治市市長選舉計票系統）。
