@@ -196,7 +196,7 @@ Made with ❤️ by [阿凱老師](https://www.smes.tyc.edu.tw/modules/tadnews/p
 - Repository：`cagoooo/Lungtan-DFC`
 - 可見性：公開
 - 主要技術：HTML、Firebase
-- 線上入口：未在 GitHub repository metadata 設定
+- 線上入口：<https://cagoooo.github.io/Lungtan-DFC/>
 
 ### 可以怎麼應用
 
