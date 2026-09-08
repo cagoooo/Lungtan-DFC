@@ -116,4 +116,4 @@ cagoooo.github.io
 ## 回報安全問題
 
 如果你發現本專案有真正的安全漏洞（**不是** Firebase Web Key Public leak），
-請聯絡 [阿凱老師](https://www.smes.tyc.edu.tw/modules/tadnews/page.php?ncsn=11&nsn=16#a5)。
+請聯絡 [阿凱老師](https://www.smes.tyc.edu.tw/modules/school/index.php?department_id=2&zone_id=0&page_id=2&content_id=11&type=news&from_op=all_news#a5)。
