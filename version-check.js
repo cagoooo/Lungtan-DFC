@@ -2,7 +2,7 @@
 // 在每個頁面 <body> 結束前載入：<script defer src="version-check.js?v=1.0.0"></script>
 
 (function () {
-  const APP_VERSION = '1.7.6';              // ← 部署時由 bump-version.ps1 自動更新
+  const APP_VERSION = '1.7.7';              // ← 部署時由 bump-version.ps1 自動更新
   const CHECK_INTERVAL_MS = 60 * 1000;      // 每 60 秒查一次新版
 
   // ---------- 1. 註冊 Service Worker ----------
@@ -119,8 +119,9 @@
           }
         }
         if ('caches' in window) {
+          // 只清本工具（lungtan-dfc-）的快取，同網域其他工具的快取不動
           const keys = await caches.keys();
-          await Promise.all(keys.map(k => caches.delete(k)));
+          await Promise.all(keys.filter(k => k.startsWith('lungtan-dfc-')).map(k => caches.delete(k)));
         }
         location.reload();
       } catch (e) {
