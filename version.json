@@ -1,5 +1,5 @@
 {
-  "version": "1.7.5",
-  "released": "2026-05-15T13:37:18+08:00",
-  "notes": "v1.7.5: ceremony fix overlay scroll bug + add dismiss/reopen buttons"
+  "version": "1.7.6",
+  "released": "2026-11-17T13:58:05+08:00",
+  "notes": "頁尾署名改連阿凱老師教育科技創新專區（升版讓離線快取更新）"
 }
